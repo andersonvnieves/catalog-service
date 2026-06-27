@@ -4,9 +4,13 @@ using System.Text;
 
 namespace br.com.fiap.cloudgames.Catalog.Domain.Enums
 {
-    public enum UserAccountStatus
+    public enum AgeRating
     {
-        ACTIVE,
-        INACTIVE
+        LIVRE,
+        A10,
+        A12,
+        A14,
+        A16,
+        A18
     }
 }

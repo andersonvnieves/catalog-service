@@ -27,4 +27,8 @@
       <ProjectReference Include="..\br.com.fiap.cloudgames.Catalog.Infrastructure\br.com.fiap.cloudgames.Catalog.Infrastructure.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Setup\" />
+    </ItemGroup>
+
 </Project>

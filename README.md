@@ -76,6 +76,6 @@ dotnet run
 
 
 PS C:\REPOS\fiap-12nett-tc-02-userapi> dotnet ef migrations add InitialDB `
->>     --project br.com.fiap.cloudgames.Catalog.Infrastructure `
->>     --startup-project br.com.fiap.cloudgames.Catalog.WebAPI `
->>     --output-dir Persistence/Migrations
+     --project br.com.fiap.cloudgames.Catalog.Infrastructure `
+     --startup-project br.com.fiap.cloudgames.Catalog.WebAPI `
+     --output-dir Persistence/Migrations

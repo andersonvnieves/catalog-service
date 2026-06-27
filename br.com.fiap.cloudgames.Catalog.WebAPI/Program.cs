@@ -1,10 +1,8 @@
 using br.com.fiap.cloudgames.Catalog.Application.Publishers;
-using br.com.fiap.cloudgames.Catalog.Application.Services;
 using br.com.fiap.cloudgames.Catalog.Application.UnitsOfWork;
-using br.com.fiap.cloudgames.Catalog.Application.UseCases.User.ChangeUserRole;
-using br.com.fiap.cloudgames.Catalog.Application.UseCases.User.LogIn;
-using br.com.fiap.cloudgames.Catalog.Application.UseCases.User.RegisterUser;
-using br.com.fiap.cloudgames.Catalog.Application.UseCases.User.RetrieveUser;
+using br.com.fiap.cloudgames.Catalog.Application.UseCases.Game.CreateGame;
+using br.com.fiap.cloudgames.Catalog.Application.UseCases.Game.RetrieveGame;
+using br.com.fiap.cloudgames.Catalog.Application.UseCases.Game.UpdateGame;
 using br.com.fiap.cloudgames.Catalog.Domain.Repositories;
 using br.com.fiap.cloudgames.Catalog.Infrastructure.Config;
 using br.com.fiap.cloudgames.Catalog.Infrastructure.Messagging;
@@ -12,10 +10,7 @@ using br.com.fiap.cloudgames.Catalog.Infrastructure.Messaging.Publishers;
 using br.com.fiap.cloudgames.Catalog.Infrastructure.Persistence;
 using br.com.fiap.cloudgames.Catalog.Infrastructure.Persistence.Context;
 using br.com.fiap.cloudgames.Catalog.Infrastructure.Persistence.Repositories;
-using br.com.fiap.cloudgames.Catalog.Infrastructure.Service;
 using br.com.fiap.cloudgames.Catalog.WebAPI.Middlewares;
-using br.com.fiap.cloudgames.Catalog.WebAPI.Setup;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
@@ -39,19 +34,6 @@ builder.Services.Configure<RabbitMqSettings>(builder.Configuration.GetSection("R
 //Add Db Context
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("Default")), ServiceLifetime.Scoped );
-
-//Identity
-builder.Services.AddIdentity<IdentityUser, IdentityRole>(option =>
-    {
-        option.Password.RequireUppercase = true;
-        option.Password.RequireLowercase = true;
-        option.Password.RequireDigit = true;
-        option.Password.RequireNonAlphanumeric = true;
-        option.Password.RequiredLength = 8;
-        option.User.RequireUniqueEmail = true;
-    })
-    .AddEntityFrameworkStores<AppDbContext>()
-    .AddApiEndpoints();
 
 //Authentication
 builder.Services.AddAuthentication(options =>
@@ -79,25 +61,19 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddAuthorization();
 
 //Repositories
-builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IGameRepository, GameRepository>();
 
 //UnitOfWork
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 //Messaging
 builder.Services.AddSingleton<RabbitMqConnection>();
-//builder.Services.AddScoped<IMessagePublisher, RabbitMqMessagePublisher>();
 builder.Services.AddScoped<IUserCreatedEventPublisher, UserCreatedEventPublisher>();
 
 //UseCases
-builder.Services.AddScoped<LogInUseCase>();
-builder.Services.AddScoped<RegisterUserUseCase>();
-builder.Services.AddScoped<ChangeUserRoleUseCase>();
-builder.Services.AddScoped<RetrieveUserUseCase>();
-
-//Services
-builder.Services.AddScoped<IUserAuthService, IdentityUserAuthService>();
-builder.Services.AddScoped<ITokenService, JwtTokenService>();
+builder.Services.AddScoped<CreateGameUseCase>();
+builder.Services.AddScoped<RetrieveGameUseCase>();
+builder.Services.AddScoped<UpdateGameUseCase>();
 
 builder.Services.AddControllers();
 
@@ -129,9 +105,9 @@ using (var scope = app.Services.CreateScope())
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
-    var configuration = services.GetRequiredService<IConfiguration>();
-    await IdentitySeeder.SeedRoles(services, configuration);
-    await IdentitySeeder.SeedBootstrapUser(services, configuration);
+    //var configuration = services.GetRequiredService<IConfiguration>();
+    //await IdentitySeeder.SeedRoles(services, configuration);
+    //await IdentitySeeder.SeedBootstrapUser(services, configuration);
 }
 
 app.UseRequestLoggingMiddleware();

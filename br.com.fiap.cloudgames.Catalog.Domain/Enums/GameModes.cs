@@ -4,9 +4,11 @@ using System.Text;
 
 namespace br.com.fiap.cloudgames.Catalog.Domain.Enums
 {
-    public enum UserAccountStatus
+    public enum GameModes
     {
-        ACTIVE,
-        INACTIVE
+        SinglePlayer,
+        MultiPlayer,
+        Cooperative,
+        Outro
     }
 }
