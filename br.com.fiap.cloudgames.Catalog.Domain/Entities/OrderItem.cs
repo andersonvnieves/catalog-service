@@ -1,10 +1,13 @@
-﻿using System;
+﻿using br.com.fiap.cloudgames.Catalog.Domain.ValueObjects;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace br.com.fiap.cloudgames.Catalog.Domain.Entities
 {
-    internal class OrderItem
+    public class OrderItem
     {
+        public Guid Guid { get; set; }
+        public Price Price { get; set; }
     }
 }

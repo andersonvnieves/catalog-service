@@ -1,6 +1,7 @@
 ﻿using br.com.fiap.cloudgames.Catalog.Domain.Entities;
 using br.com.fiap.cloudgames.Catalog.Domain.Enums;
 using br.com.fiap.cloudgames.Catalog.Domain.Exceptions;
+using br.com.fiap.cloudgames.Catalog.Domain.ValueObjects;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -21,7 +22,8 @@ namespace br.com.fiap.cloudgames.Catalog.Domain.Aggregates
             AgeRating ageRating,
             List<GameModes> gameModes,
             Publisher publisher,
-            List<Developer> developers)
+            List<Developer> developers,
+            Price price)
         {
             var game = new Game()
             {
@@ -34,9 +36,10 @@ namespace br.com.fiap.cloudgames.Catalog.Domain.Aggregates
                 AgeRating = ageRating,
                 GameModes = gameModes,
                 Publisher = publisher,
-                Developers = developers
+                Developers = developers,
+                Price = price
             };
-            Validate(title, description, story, releaseDate, ageRating, gameModes, developers);
+            Validate(title, description, story, releaseDate, ageRating, gameModes, developers, price);
             return game;
         }
         #endregion
@@ -52,6 +55,7 @@ namespace br.com.fiap.cloudgames.Catalog.Domain.Aggregates
         public List<GameModes> GameModes { get; private set; }
         public Publisher Publisher { get; private set; }
         public List<Developer> Developers { get; private set; }
+        public Price Price { get; private set; }
         #endregion
 
         public void UpdateDetails(
@@ -63,9 +67,10 @@ namespace br.com.fiap.cloudgames.Catalog.Domain.Aggregates
             AgeRating ageRating,
             List<GameModes> gameModes,
             Publisher publisher,
-            List<Developer> developers)
+            List<Developer> developers,
+            Price price)
         {
-            Validate(title, description, story, releaseDate, ageRating, gameModes, developers);
+            Validate(title, description, story, releaseDate, ageRating, gameModes, developers, price);
 
             Title = title;
             Description = description;
@@ -76,6 +81,7 @@ namespace br.com.fiap.cloudgames.Catalog.Domain.Aggregates
             GameModes = gameModes;
             Publisher = publisher;
             Developers = developers;
+            Price = price;
         }
 
         private static void Validate(
@@ -85,7 +91,8 @@ namespace br.com.fiap.cloudgames.Catalog.Domain.Aggregates
             DateOnly releaseDate,
             AgeRating ageRating,
             List<GameModes> gameModes,
-            List<Developer> developers)
+            List<Developer> developers,
+            Price price)
         {
             var errors = new List<string>();
 
@@ -106,6 +113,9 @@ namespace br.com.fiap.cloudgames.Catalog.Domain.Aggregates
 
             if (developers == null || !developers.Any())
                 errors.Add("At least one Developer is required.");
+            
+            if (price == null)
+                errors.Add("Game must have a price.");
 
             if (errors.Any())
                 throw new DomainException(errors);

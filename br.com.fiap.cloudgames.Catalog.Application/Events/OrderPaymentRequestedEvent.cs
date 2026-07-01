@@ -4,7 +4,7 @@ using System.Text;
 
 namespace br.com.fiap.cloudgames.Catalog.Application.Events
 {
-    internal class OrderPaymentRequested
+    internal class OrderPaymentRequestedEvent
     {
     }
 }

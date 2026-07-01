@@ -4,9 +4,10 @@ using System.Text;
 
 namespace br.com.fiap.cloudgames.Catalog.Domain.Enums
 {
-    public enum UserAccountStatus
+    public enum OrderStatus
     {
-        ACTIVE,
-        INACTIVE
+        Pending,
+        Paid,
+        Cancelled
     }
 }
