@@ -48,7 +48,12 @@ namespace br.com.fiap.cloudgames.Catalog.Infrastructure.Persistence.Configuratio
                 x.Property(m => m.Name).HasMaxLength(150).IsRequired();
             });
 
-            builder.Property(x => x.Price.PriceValue).IsRequired();
+            builder.OwnsOne(i => i.Price, p =>
+            {
+                p.Property(x => x.PriceValue)
+                    .HasColumnName("Price")
+                    .IsRequired();
+            });
         }
     }
 }

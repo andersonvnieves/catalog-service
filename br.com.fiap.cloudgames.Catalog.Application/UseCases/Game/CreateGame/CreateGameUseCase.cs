@@ -2,6 +2,7 @@
 using br.com.fiap.cloudgames.Catalog.Domain.Entities;
 using br.com.fiap.cloudgames.Catalog.Domain.Enums;
 using br.com.fiap.cloudgames.Catalog.Domain.Repositories;
+using br.com.fiap.cloudgames.Catalog.Domain.ValueObjects;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -49,7 +50,9 @@ namespace br.com.fiap.cloudgames.Catalog.Application.UseCases.Game.CreateGame
             foreach (var requestDeveloper in request.Developers)
             {
                 developers.Add(new Developer(requestDeveloper));
-            }           
+            }
+
+            var price = new Price(request.Price);
 
             try
             {
@@ -62,7 +65,8 @@ namespace br.com.fiap.cloudgames.Catalog.Application.UseCases.Game.CreateGame
                     ageRating,
                     gameModes,
                     publisher,
-                    developers);
+                    developers,
+                    price);
 
                 await _gameRepository.AddAsync(game);
                 await _unitOfWork.CommitAsync();
@@ -81,6 +85,7 @@ namespace br.com.fiap.cloudgames.Catalog.Application.UseCases.Game.CreateGame
                     Developers = game.Developers.Select(developer => developer.Name).ToList(),
                     GameModes = game.GameModes.Select(gameMode => gameMode.ToString()).ToList(),
                     Publisher = publisher.Name,
+                    Price = game.Price.PriceValue
                 };
                 return response;
             }

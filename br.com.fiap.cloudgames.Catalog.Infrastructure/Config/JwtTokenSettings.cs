@@ -2,8 +2,8 @@ namespace br.com.fiap.cloudgames.Catalog.Infrastructure.Config;
 
 public class JwtTokenSettings
 {
-    public String Issuer { get; set; }
-    public String Audience { get; set; }
-    public String Key { get; set; }
+    public required String Issuer { get; set; }
+    public required String Audience { get; set; }
+    public required String Key { get; set; }
     public int TokenTtlInMinutes { get; set; }
 }

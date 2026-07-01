@@ -15,5 +15,6 @@ namespace br.com.fiap.cloudgames.Catalog.Application.UseCases.Game.CreateGame
         public List<String> GameModes { get; set; }
         public String Publisher { get; set; }
         public List<String> Developers { get; set; }
+        public decimal Price { get; set; }
     }
 }

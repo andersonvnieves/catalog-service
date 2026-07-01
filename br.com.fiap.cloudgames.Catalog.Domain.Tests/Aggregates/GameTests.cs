@@ -22,7 +22,8 @@ namespace br.com.fiap.cloudgames.Catalog.Domain.Tests.Aggregates
                 ageRating: AgeRating.LIVRE,
                 gameModes: DomainTestData.ValidGameModes(),
                 publisher: DomainTestData.ValidPublisher(),
-                developers: DomainTestData.ValidDevelopers());
+                developers: DomainTestData.ValidDevelopers(),
+                price: DomainTestData.ValidPrice());
 
             Assert.NotEqual(Guid.Empty, game.Id);
             Assert.Equal("My Game", game.Title);
@@ -51,7 +52,8 @@ namespace br.com.fiap.cloudgames.Catalog.Domain.Tests.Aggregates
                     ageRating: AgeRating.LIVRE,
                     gameModes: DomainTestData.ValidGameModes(),
                     publisher: DomainTestData.ValidPublisher(),
-                    developers: DomainTestData.ValidDevelopers()));
+                    developers: DomainTestData.ValidDevelopers(),
+                    price: DomainTestData.ValidPrice()));
             Assert.Contains("Title is required.", ex.Errors);
         }
 
@@ -71,7 +73,8 @@ namespace br.com.fiap.cloudgames.Catalog.Domain.Tests.Aggregates
                     ageRating: AgeRating.LIVRE,
                     gameModes: DomainTestData.ValidGameModes(),
                     publisher: DomainTestData.ValidPublisher(),
-                    developers: DomainTestData.ValidDevelopers()));
+                    developers: DomainTestData.ValidDevelopers(),
+                    price: DomainTestData.ValidPrice()));
             Assert.Contains("Description is required.", ex.Errors);
         }
 
@@ -91,7 +94,8 @@ namespace br.com.fiap.cloudgames.Catalog.Domain.Tests.Aggregates
                     ageRating: AgeRating.LIVRE,
                     gameModes: DomainTestData.ValidGameModes(),
                     publisher: DomainTestData.ValidPublisher(),
-                    developers: DomainTestData.ValidDevelopers()));
+                    developers: DomainTestData.ValidDevelopers(),
+                    price: DomainTestData.ValidPrice()));
             Assert.Contains("Story is required.", ex.Errors);
         }
 
@@ -108,7 +112,8 @@ namespace br.com.fiap.cloudgames.Catalog.Domain.Tests.Aggregates
                     ageRating: AgeRating.LIVRE,
                     gameModes: DomainTestData.ValidGameModes(),
                     publisher: DomainTestData.ValidPublisher(),
-                    developers: DomainTestData.ValidDevelopers()));
+                    developers: DomainTestData.ValidDevelopers(),
+                    price: DomainTestData.ValidPrice()));
             Assert.Contains("ReleaseDate cannot be in the future.", ex.Errors);
         }
 
@@ -125,7 +130,8 @@ namespace br.com.fiap.cloudgames.Catalog.Domain.Tests.Aggregates
                     ageRating: AgeRating.LIVRE,
                     gameModes: null!,
                     publisher: DomainTestData.ValidPublisher(),
-                    developers: DomainTestData.ValidDevelopers()));
+                    developers: DomainTestData.ValidDevelopers(),
+                    price: DomainTestData.ValidPrice()));
             Assert.Contains("At least one GameMode is required.", ex1.Errors);
 
             var ex2 = Assert.Throws<DomainException>(() =>
@@ -138,7 +144,8 @@ namespace br.com.fiap.cloudgames.Catalog.Domain.Tests.Aggregates
                     ageRating: AgeRating.LIVRE,
                     gameModes: [],
                     publisher: DomainTestData.ValidPublisher(),
-                    developers: DomainTestData.ValidDevelopers()));
+                    developers: DomainTestData.ValidDevelopers(),
+                    price: DomainTestData.ValidPrice()));
             Assert.Contains("At least one GameMode is required.", ex2.Errors);
         }
 
@@ -155,7 +162,8 @@ namespace br.com.fiap.cloudgames.Catalog.Domain.Tests.Aggregates
                     ageRating: AgeRating.LIVRE,
                     gameModes: DomainTestData.ValidGameModes(),
                     publisher: DomainTestData.ValidPublisher(),
-                    developers: null!));
+                    developers: null!,
+                    price: DomainTestData.ValidPrice()));
             Assert.Contains("At least one Developer is required.", ex1.Errors);
 
             var ex2 = Assert.Throws<DomainException>(() =>
@@ -168,7 +176,8 @@ namespace br.com.fiap.cloudgames.Catalog.Domain.Tests.Aggregates
                     ageRating: AgeRating.LIVRE,
                     gameModes: DomainTestData.ValidGameModes(),
                     publisher: DomainTestData.ValidPublisher(),
-                    developers: []));
+                    developers: [],
+                    price: DomainTestData.ValidPrice()));
             Assert.Contains("At least one Developer is required.", ex2.Errors);
         }
 
@@ -185,7 +194,8 @@ namespace br.com.fiap.cloudgames.Catalog.Domain.Tests.Aggregates
                     ageRating: AgeRating.LIVRE,
                     gameModes: DomainTestData.ValidGameModes(),
                     publisher: DomainTestData.ValidPublisher(),
-                    developers: DomainTestData.ValidDevelopers()));
+                    developers: DomainTestData.ValidDevelopers(),
+                    price: DomainTestData.ValidPrice()));
             Assert.Contains("At least one Platform is required.", ex1.Errors);
 
             var ex2 = Assert.Throws<DomainException>(() =>
@@ -198,7 +208,8 @@ namespace br.com.fiap.cloudgames.Catalog.Domain.Tests.Aggregates
                     ageRating: AgeRating.LIVRE,
                     gameModes: DomainTestData.ValidGameModes(),
                     publisher: DomainTestData.ValidPublisher(),
-                    developers: DomainTestData.ValidDevelopers()));
+                    developers: DomainTestData.ValidDevelopers(),
+                    price: DomainTestData.ValidPrice()));
             Assert.Contains("At least one Platform is required.", ex2.Errors);
         }
     }

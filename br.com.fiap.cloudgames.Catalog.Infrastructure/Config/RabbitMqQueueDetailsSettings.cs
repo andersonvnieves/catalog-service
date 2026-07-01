@@ -6,7 +6,7 @@ namespace br.com.fiap.cloudgames.Catalog.Infrastructure.Config
 {
     public class RabbitMqQueueDetailsSettings
     {
-        public string Exchange { get; set; }
-        public string RoutingKey { get; set; }
+        public required string Exchange { get; set; }
+        public required string RoutingKey { get; set; }
     }
 }

@@ -3,6 +3,10 @@ using br.com.fiap.cloudgames.Catalog.Application.UnitsOfWork;
 using br.com.fiap.cloudgames.Catalog.Application.UseCases.Game.CreateGame;
 using br.com.fiap.cloudgames.Catalog.Application.UseCases.Game.RetrieveGame;
 using br.com.fiap.cloudgames.Catalog.Application.UseCases.Game.UpdateGame;
+using br.com.fiap.cloudgames.Catalog.Application.UseCases.Library.AddGame;
+using br.com.fiap.cloudgames.Catalog.Application.UseCases.Order.CancelOrder;
+using br.com.fiap.cloudgames.Catalog.Application.UseCases.Order.CompleteOrder;
+using br.com.fiap.cloudgames.Catalog.Application.UseCases.Order.CreateOrder;
 using br.com.fiap.cloudgames.Catalog.Domain.Repositories;
 using br.com.fiap.cloudgames.Catalog.Infrastructure.Config;
 using br.com.fiap.cloudgames.Catalog.Infrastructure.Messagging;
@@ -62,6 +66,8 @@ builder.Services.AddAuthorization();
 
 //Repositories
 builder.Services.AddScoped<IGameRepository, GameRepository>();
+builder.Services.AddScoped<ILibraryRepository, LibraryRepository>();
+builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 
 //UnitOfWork
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
@@ -74,6 +80,13 @@ builder.Services.AddScoped<IUserCreatedEventPublisher, UserCreatedEventPublisher
 builder.Services.AddScoped<CreateGameUseCase>();
 builder.Services.AddScoped<RetrieveGameUseCase>();
 builder.Services.AddScoped<UpdateGameUseCase>();
+
+builder.Services.AddScoped<AddGameUseCase>();
+builder.Services.AddScoped<RetrieveGameUseCase>();
+
+builder.Services.AddScoped<CancelOrderUseCase>();
+builder.Services.AddScoped<CompleteOrderUseCase>();
+builder.Services.AddScoped<CreateOrderUseCase>();
 
 builder.Services.AddControllers();
 

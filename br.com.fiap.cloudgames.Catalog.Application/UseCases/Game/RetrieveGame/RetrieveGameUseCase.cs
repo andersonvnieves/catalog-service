@@ -50,7 +50,8 @@ namespace br.com.fiap.cloudgames.Catalog.Application.UseCases.Game.RetrieveGame
                     AgeRating = game.AgeRating.ToString(),
                     GameModes = game.GameModes.Select(mode => mode.ToString()).ToList(),
                     Publisher = game.Publisher.Name,
-                    Developers = game.Developers.Select(developer => developer.Name).ToList()
+                    Developers = game.Developers.Select(developer => developer.Name).ToList(),
+                    Price = game.Price.PriceValue
                 };
             }
             catch (Exception ex)

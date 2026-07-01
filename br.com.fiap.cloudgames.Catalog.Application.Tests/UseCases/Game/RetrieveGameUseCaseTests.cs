@@ -2,6 +2,7 @@
 using br.com.fiap.cloudgames.Catalog.Domain.Entities;
 using br.com.fiap.cloudgames.Catalog.Domain.Enums;
 using br.com.fiap.cloudgames.Catalog.Domain.Repositories;
+using br.com.fiap.cloudgames.Catalog.Domain.ValueObjects;
 using Microsoft.Extensions.Logging;
 using Moq;
 using System;
@@ -57,7 +58,8 @@ namespace br.com.fiap.cloudgames.Catalog.Application.Tests.UseCases.Game
                 AgeRating.LIVRE,
                 new List<GameModes> { GameModes.SinglePlayer },
                 new Publisher("Publisher Inc"),
-                new List<Developer> { new Developer("Dev Studio") });
+                new List<Developer> { new Developer("Dev Studio") },
+                new Price(10));
 
             repo.Setup(x => x.GetByIdAsync(game.Id)).ReturnsAsync(game);
 
