@@ -30,5 +30,10 @@ namespace br.com.fiap.cloudgames.Catalog.Infrastructure.Persistence.Repositories
         {
             _games.Update(game);
         }
+
+        public async Task<IEnumerable<Game>> GetByIdsAsync(IEnumerable<Guid> ids)
+        {
+            return await _games.Where(g => ids.Contains(g.Id)).ToListAsync();
+        }
     }
 }

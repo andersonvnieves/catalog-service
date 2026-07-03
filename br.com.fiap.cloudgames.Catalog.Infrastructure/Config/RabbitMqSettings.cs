@@ -7,6 +7,6 @@ namespace br.com.fiap.cloudgames.Catalog.Infrastructure.Config
     public class RabbitMqSettings
     {
         public required string URI { get; set; }
-        public required RabbitMqQueueDetailsSettings UserCreatedEvent { get; set; }
+        public required RabbitMqQueueDetailsSettings OrderCreatedEvent { get; set; }
     }
 }

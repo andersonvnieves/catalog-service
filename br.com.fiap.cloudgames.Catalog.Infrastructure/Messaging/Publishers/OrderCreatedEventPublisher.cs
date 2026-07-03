@@ -6,17 +6,17 @@ using Microsoft.Extensions.Options;
 
 namespace br.com.fiap.cloudgames.Catalog.Infrastructure.Messaging.Publishers
 {
-    public class UserCreatedEventPublisher : RabbitMqMessagePublisher, IUserCreatedEventPublisher
+    public class OrderCreatedEventPublisher : RabbitMqMessagePublisher, IOrderCreatedEventPublisher
     {
         private readonly IOptions<RabbitMqSettings> _options;
-        public UserCreatedEventPublisher(RabbitMqConnection connection, IOptions<RabbitMqSettings> options) : base(connection)
+        public OrderCreatedEventPublisher(RabbitMqConnection connection, IOptions<RabbitMqSettings> options) : base(connection)
         {
             _options = options;
         }
 
-        public async Task PublishAsync(UserCreatedEvent message)
+        public async Task PublishAsync(OrderCreatedEvent message)
         {
-            await base.PublishAsync<UserCreatedEvent>(_options.Value.UserCreatedEvent.Exchange, _options.Value.UserCreatedEvent.RoutingKey, message);
+            await base.PublishAsync<OrderCreatedEvent>(_options.Value.OrderCreatedEvent.Exchange, _options.Value.OrderCreatedEvent.RoutingKey, message);
         }
     }
 }

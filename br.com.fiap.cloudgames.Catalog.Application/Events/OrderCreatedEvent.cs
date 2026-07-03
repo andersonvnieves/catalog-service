@@ -4,11 +4,13 @@ using System.Text;
 
 namespace br.com.fiap.cloudgames.Catalog.Application.Events
 {
-    public class UserCreatedEvent
+    public class OrderCreatedEvent
     {
         public Guid EventId { get; init; }
+        public Guid OrderId { get; set; }
+        public decimal TotalAmount { get; set; }
         public Guid UserId { get; init; }
-        public string Name { get; init; } = null!;
-        public string Email { get; init; } = null!;
+        public required string Name { get; init; }
+        public required string Email { get; init; }
     }
 }

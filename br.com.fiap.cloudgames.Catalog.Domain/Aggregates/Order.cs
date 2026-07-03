@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
+using br.com.fiap.cloudgames.Catalog.Domain.ValueObjects;
 
 namespace br.com.fiap.cloudgames.Catalog.Domain.Aggregates
 {
@@ -67,6 +68,17 @@ namespace br.com.fiap.cloudgames.Catalog.Domain.Aggregates
                 throw new DomainException("Only pending orders can be cancelled.");
 
             OrderStatus = OrderStatus.Cancelled;
+        }
+        
+        public Price TotalAmount
+        {
+            get
+            {
+                decimal amount = 0;
+                foreach (var item in _items)
+                    amount += item.Price.PriceValue;
+                return new Price(amount);
+            }
         }
     }
 }

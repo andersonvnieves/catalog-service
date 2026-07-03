@@ -8,5 +8,6 @@ namespace br.com.fiap.cloudgames.Catalog.Domain.Repositories
     public interface IOrderRepository
     {
         Task AddAsync(Order order);
+        Task<Order?> GetByIdAsync(Guid id);
     }
 }

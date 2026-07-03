@@ -19,6 +19,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
 using System.Text;
+using br.com.fiap.cloudgames.Catalog.WebAPI;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -74,7 +75,7 @@ builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 //Messaging
 builder.Services.AddSingleton<RabbitMqConnection>();
-builder.Services.AddScoped<IUserCreatedEventPublisher, UserCreatedEventPublisher>();
+builder.Services.AddScoped<IOrderCreatedEventPublisher, OrderCreatedEventPublisher>();
 
 //UseCases
 builder.Services.AddScoped<CreateGameUseCase>();
@@ -99,11 +100,14 @@ builder.Services.AddSwaggerGen(options =>
 {
     options.SwaggerDoc("v1", new()
     {
-        Title = "FIAP Cloud Games (FCG)",
+        Title = "CatalogAPI (FCG)",
         Version = "v1",
-        Description = "API de jogos e usuários"
+        Description = "Game Catalog and Library API "
     });
 });
+
+// Add Worker
+builder.Services.AddHostedService<Worker>();
 
 var app = builder.Build();
 
@@ -114,20 +118,8 @@ using (var scope = app.Services.CreateScope())
     await dbContext.Database.MigrateAsync();
 }
 
-//Seed Identity
-using (var scope = app.Services.CreateScope())
-{
-    var services = scope.ServiceProvider;
-    //var configuration = services.GetRequiredService<IConfiguration>();
-    //await IdentitySeeder.SeedRoles(services, configuration);
-    //await IdentitySeeder.SeedBootstrapUser(services, configuration);
-}
-
 app.UseRequestLoggingMiddleware();
 app.UseErrorHandlingMiddleware();
-
-//Map Identity Endpoints
-//app.MapIdentityApi<IdentityUser>();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

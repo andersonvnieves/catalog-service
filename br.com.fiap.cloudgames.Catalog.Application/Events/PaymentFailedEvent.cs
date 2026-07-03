@@ -4,7 +4,9 @@ using System.Text;
 
 namespace br.com.fiap.cloudgames.Catalog.Application.Events
 {
-    internal class PaymentFailedEvent
+    public class PaymentFailedEvent
     {
+        public Guid EventId { get; init; }
+        public Guid OrderId { get; set; }
     }
 }

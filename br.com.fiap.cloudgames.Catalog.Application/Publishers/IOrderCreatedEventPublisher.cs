@@ -5,8 +5,8 @@ using System.Text;
 
 namespace br.com.fiap.cloudgames.Catalog.Application.Publishers
 {
-    public interface IUserCreatedEventPublisher
+    public interface IOrderCreatedEventPublisher
     {
-        Task PublishAsync(UserCreatedEvent message);
+        Task PublishAsync(OrderCreatedEvent message);
     }
 }

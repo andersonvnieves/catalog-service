@@ -23,5 +23,10 @@ namespace br.com.fiap.cloudgames.Catalog.Infrastructure.Persistence.Repositories
         {
             await _order.AddAsync(order);
         }
+
+        public Task<Order?> GetByIdAsync(Guid id)
+        {
+            return _order.FirstOrDefaultAsync(o => o.Id == id);
+        }
     }
 }
