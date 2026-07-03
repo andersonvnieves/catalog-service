@@ -8,5 +8,7 @@ namespace br.com.fiap.cloudgames.Catalog.Infrastructure.Config
     {
         public required string URI { get; set; }
         public required RabbitMqQueueDetailsSettings OrderCreatedEvent { get; set; }
+        public required RabbitMqQueueDetailsSettings PaymentFailedEvent { get; set; }
+        public required RabbitMqQueueDetailsSettings PaymentProcessedEvent { get; set; }
     }
 }

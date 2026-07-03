@@ -8,15 +8,13 @@ namespace br.com.fiap.cloudgames.Catalog.Infrastructure.Messaging.Publishers
 {
     public class OrderCreatedEventPublisher : RabbitMqMessagePublisher, IOrderCreatedEventPublisher
     {
-        private readonly IOptions<RabbitMqSettings> _options;
-        public OrderCreatedEventPublisher(RabbitMqConnection connection, IOptions<RabbitMqSettings> options) : base(connection)
-        {
-            _options = options;
-        }
+        public OrderCreatedEventPublisher(RabbitMqConnection connection, IOptions<RabbitMqSettings> options) 
+            : base(connection, options.Value.OrderCreatedEvent.Exchange, options.Value.OrderCreatedEvent.RoutingKey)
+        { }
 
         public async Task PublishAsync(OrderCreatedEvent message)
         {
-            await base.PublishAsync<OrderCreatedEvent>(_options.Value.OrderCreatedEvent.Exchange, _options.Value.OrderCreatedEvent.RoutingKey, message);
+            await base.PublishAsync<OrderCreatedEvent>(message);
         }
     }
 }

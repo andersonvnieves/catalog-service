@@ -19,6 +19,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
 using System.Text;
+using br.com.fiap.cloudgames.Catalog.Application.Consumers;
+using br.com.fiap.cloudgames.Catalog.Infrastructure.Messagging.Consumers;
 using br.com.fiap.cloudgames.Catalog.WebAPI;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -76,6 +78,8 @@ builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 //Messaging
 builder.Services.AddSingleton<RabbitMqConnection>();
 builder.Services.AddScoped<IOrderCreatedEventPublisher, OrderCreatedEventPublisher>();
+builder.Services.AddScoped<IPaymentFailedEventConsumer, PaymentFailedEventConsumer>();
+builder.Services.AddScoped<IPaymentProcessedEventConsumer, PaymentProcessedEventConsumer>();
 
 //UseCases
 builder.Services.AddScoped<CreateGameUseCase>();
@@ -137,3 +141,5 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+//TODO: UM USUARIO NAO PODE ALTERAR NADA DE OUTRO, SEMPRE TEM QUE VALIDAR O USER ID NO TOKEN

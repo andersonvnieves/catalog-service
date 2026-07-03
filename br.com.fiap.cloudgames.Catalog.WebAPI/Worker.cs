@@ -6,16 +6,16 @@ namespace br.com.fiap.cloudgames.Catalog.WebAPI;
 public class Worker : BackgroundService
 {
     private readonly ILogger<Worker> _logger;
-    private readonly RabbitMqConnection _rabbitConnection;
-    private readonly PaymentProcessedConsumer _paymentProcessedConsumer;
-    private readonly UserCreatedConsumer _userCreatedConsumer;
+    private readonly PaymentProcessedEventConsumer _paymentProcessedEventConsumer;
+    private readonly PaymentFailedEventConsumer _paymentFailedEventConsumer;
 
-    public Worker(ILogger<Worker> logger, RabbitMqConnection rabbitMqConnection, PaymentProcessedConsumer paymentProcessedConsumer, UserCreatedConsumer userCreatedConsumer)
+    public Worker(ILogger<Worker> logger,
+        PaymentProcessedEventConsumer paymentProcessedEventConsumer, 
+        PaymentFailedEventConsumer paymentFailedEventConsumer)
     {
         _logger = logger;
-        _rabbitConnection = rabbitMqConnection;
-        _paymentProcessedConsumer = paymentProcessedConsumer;
-        _userCreatedConsumer = userCreatedConsumer;
+        _paymentProcessedEventConsumer = paymentProcessedEventConsumer;
+        _paymentFailedEventConsumer = paymentFailedEventConsumer;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -24,8 +24,10 @@ public class Worker : BackgroundService
         {
             _logger.LogInformation("Starting Worker");
 
-            await _paymentProcessedConsumer.ConsumeAsync();
-
+            await Task.WhenAll(
+                _paymentProcessedEventConsumer.ConsumeAsync(),
+                _paymentFailedEventConsumer.ConsumeAsync());
+            
             await Task.Delay(Timeout.Infinite, stoppingToken);
             _logger.LogInformation("Stopping Worker");
         }
@@ -35,7 +37,8 @@ public class Worker : BackgroundService
         }
         finally
         {
-            await _paymentProcessedConsumer.DisposeAsync();
+            await _paymentProcessedEventConsumer.DisposeAsync();
+            await _paymentFailedEventConsumer.DisposeAsync();
         }
     }
 }
