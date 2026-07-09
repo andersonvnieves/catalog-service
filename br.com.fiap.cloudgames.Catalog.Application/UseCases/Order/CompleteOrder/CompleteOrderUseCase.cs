@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using br.com.fiap.cloudgames.Catalog.Application.UnitsOfWork;
+﻿using br.com.fiap.cloudgames.Catalog.Application.UnitsOfWork;
 using br.com.fiap.cloudgames.Catalog.Domain.Repositories;
 
 namespace br.com.fiap.cloudgames.Catalog.Application.UseCases.Order.CompleteOrder
@@ -34,5 +31,7 @@ namespace br.com.fiap.cloudgames.Catalog.Application.UseCases.Order.CompleteOrde
             }
             return;
         }
+
+        
     }
 }

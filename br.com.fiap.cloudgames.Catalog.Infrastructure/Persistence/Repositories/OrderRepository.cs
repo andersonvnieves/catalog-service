@@ -2,9 +2,6 @@
 using br.com.fiap.cloudgames.Catalog.Domain.Repositories;
 using br.com.fiap.cloudgames.Catalog.Infrastructure.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace br.com.fiap.cloudgames.Catalog.Infrastructure.Persistence.Repositories
 {
@@ -24,9 +21,15 @@ namespace br.com.fiap.cloudgames.Catalog.Infrastructure.Persistence.Repositories
             await _order.AddAsync(order);
         }
 
+        public Task UpdateAsync(Order order)
+        {
+            _order.Update(order);
+            return Task.CompletedTask;
+        }
+
         public Task<Order?> GetByIdAsync(Guid id)
         {
             return _order.FirstOrDefaultAsync(o => o.Id == id);
-        }
+        }        
     }
 }

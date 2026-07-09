@@ -9,7 +9,7 @@ namespace br.com.fiap.cloudgames.Catalog.Infrastructure.Messagging.Consumers;
 
 public abstract class RabbitMqMessageConsumer<T> : IMessageConsumer, IAsyncDisposable
 {
-    private readonly ILogger _logger;
+    private readonly ILogger<T> _logger;
     private readonly RabbitMqConnection _rabbitConnection;
     private IChannel? _channel;
 
@@ -18,7 +18,7 @@ public abstract class RabbitMqMessageConsumer<T> : IMessageConsumer, IAsyncDispo
 
     protected RabbitMqMessageConsumer(
         RabbitMqConnection rabbitConnection,
-        ILogger logger,
+        ILogger<T> logger,
         string exchange,
         string routingKey)
     {

@@ -1,27 +1,29 @@
+using br.com.fiap.cloudgames.Catalog.Application.Abstractions;
+using br.com.fiap.cloudgames.Catalog.Application.Consumers;
+using br.com.fiap.cloudgames.Catalog.Application.Handlers;
 using br.com.fiap.cloudgames.Catalog.Application.Publishers;
 using br.com.fiap.cloudgames.Catalog.Application.UnitsOfWork;
 using br.com.fiap.cloudgames.Catalog.Application.UseCases.Game.CreateGame;
 using br.com.fiap.cloudgames.Catalog.Application.UseCases.Game.RetrieveGame;
 using br.com.fiap.cloudgames.Catalog.Application.UseCases.Game.UpdateGame;
-using br.com.fiap.cloudgames.Catalog.Application.UseCases.Library.AddGame;
 using br.com.fiap.cloudgames.Catalog.Application.UseCases.Order.CancelOrder;
 using br.com.fiap.cloudgames.Catalog.Application.UseCases.Order.CompleteOrder;
 using br.com.fiap.cloudgames.Catalog.Application.UseCases.Order.CreateOrder;
 using br.com.fiap.cloudgames.Catalog.Domain.Repositories;
 using br.com.fiap.cloudgames.Catalog.Infrastructure.Config;
+using br.com.fiap.cloudgames.Catalog.Infrastructure.Identity;
 using br.com.fiap.cloudgames.Catalog.Infrastructure.Messagging;
+using br.com.fiap.cloudgames.Catalog.Infrastructure.Messagging.Consumers;
 using br.com.fiap.cloudgames.Catalog.Infrastructure.Messaging.Publishers;
 using br.com.fiap.cloudgames.Catalog.Infrastructure.Persistence;
 using br.com.fiap.cloudgames.Catalog.Infrastructure.Persistence.Context;
 using br.com.fiap.cloudgames.Catalog.Infrastructure.Persistence.Repositories;
+using br.com.fiap.cloudgames.Catalog.WebAPI;
 using br.com.fiap.cloudgames.Catalog.WebAPI.Middlewares;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
 using System.Text;
-using br.com.fiap.cloudgames.Catalog.Application.Consumers;
-using br.com.fiap.cloudgames.Catalog.Infrastructure.Messagging.Consumers;
-using br.com.fiap.cloudgames.Catalog.WebAPI;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -64,8 +66,11 @@ builder.Services.AddAuthentication(options =>
         };
     });
 
+builder.Services.AddHttpContextAccessor();
+
 //Authorization
 builder.Services.AddAuthorization();
+builder.Services.AddScoped<ICurrentUser, JwtCurrentUser>();
 
 //Repositories
 builder.Services.AddScoped<IGameRepository, GameRepository>();
@@ -78,17 +83,16 @@ builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 //Messaging
 builder.Services.AddSingleton<RabbitMqConnection>();
 builder.Services.AddScoped<IOrderCreatedEventPublisher, OrderCreatedEventPublisher>();
-builder.Services.AddScoped<IPaymentFailedEventConsumer, PaymentFailedEventConsumer>();
 builder.Services.AddScoped<IPaymentProcessedEventConsumer, PaymentProcessedEventConsumer>();
+
+//Handlers
+builder.Services.AddScoped<PaymentProcessedEventHandler>();
 
 //UseCases
 builder.Services.AddScoped<CreateGameUseCase>();
 builder.Services.AddScoped<RetrieveGameUseCase>();
 builder.Services.AddScoped<UpdateGameUseCase>();
-
-builder.Services.AddScoped<AddGameUseCase>();
 builder.Services.AddScoped<RetrieveGameUseCase>();
-
 builder.Services.AddScoped<CancelOrderUseCase>();
 builder.Services.AddScoped<CompleteOrderUseCase>();
 builder.Services.AddScoped<CreateOrderUseCase>();
@@ -141,5 +145,3 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
-
-//TODO: UM USUARIO NAO PODE ALTERAR NADA DE OUTRO, SEMPRE TEM QUE VALIDAR O USER ID NO TOKEN

@@ -5,7 +5,7 @@ using System.Text;
 
 namespace br.com.fiap.cloudgames.Catalog.Application.Publishers
 {
-    public interface IOrderCreatedEventPublisher
+    public interface IOrderCreatedEventPublisher : IMessagePublisher
     {
         Task PublishAsync(OrderCreatedEvent message);
     }

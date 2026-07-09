@@ -1,7 +1,8 @@
-﻿using System;
+﻿using br.com.fiap.cloudgames.Catalog.Application.Abstractions;
+using br.com.fiap.cloudgames.Catalog.Domain.Repositories;
+using System;
 using System.Collections.Generic;
 using System.Text;
-using br.com.fiap.cloudgames.Catalog.Domain.Repositories;
 
 namespace br.com.fiap.cloudgames.Catalog.Application.UseCases.Library.RetrieveLibrary
 {
@@ -9,16 +10,18 @@ namespace br.com.fiap.cloudgames.Catalog.Application.UseCases.Library.RetrieveLi
     {
         private readonly ILibraryRepository _libraryRepository;
         private readonly IGameRepository _gameRepository;
-        
-        public RetrieveLibraryUseCase(ILibraryRepository libraryRepository, IGameRepository gameRepository)
+        private readonly ICurrentUser _currentUser;
+
+        public RetrieveLibraryUseCase(ILibraryRepository libraryRepository, IGameRepository gameRepository, ICurrentUser currentUser)
         {
             _libraryRepository = libraryRepository;
             _gameRepository = gameRepository;
+            _currentUser = currentUser;
         }
 
-        public async Task<RetrieveLibraryResponse> ExecuteAsync(RetrieveLibraryRequest request)
+        public async Task<RetrieveLibraryResponse> ExecuteAsync()
         {
-            var library = await _libraryRepository.GetByIdAsync(request.UserId);
+            var library = await _libraryRepository.GetByIdAsync(_currentUser.UserId);
             if(library == null)
                 throw new ApplicationException("No Library found");
             

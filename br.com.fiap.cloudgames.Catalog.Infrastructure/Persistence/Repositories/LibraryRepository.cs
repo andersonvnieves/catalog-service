@@ -2,9 +2,6 @@
 using br.com.fiap.cloudgames.Catalog.Domain.Repositories;
 using br.com.fiap.cloudgames.Catalog.Infrastructure.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace br.com.fiap.cloudgames.Catalog.Infrastructure.Persistence.Repositories
 {

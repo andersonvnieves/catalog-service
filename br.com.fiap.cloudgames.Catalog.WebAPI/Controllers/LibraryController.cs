@@ -17,9 +17,9 @@ namespace br.com.fiap.cloudgames.Catalog.WebAPI.Controllers
         
         [Authorize(Roles = BASIC_ROLE)]
         [HttpGet]
-        public async Task<IActionResult> Get([FromQuery] String Id)
+        public async Task<IActionResult> Get()
         {
-            var result = await _retrieveLibraryUseCase.ExecuteAsync(new RetrieveLibraryRequest() { UserId = Guid.Parse(Id) });
+            var result = await _retrieveLibraryUseCase.ExecuteAsync();
             return Ok(result);
         }
     }

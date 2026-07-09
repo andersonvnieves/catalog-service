@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using br.com.fiap.cloudgames.Catalog.Application.Abstractions;
 using br.com.fiap.cloudgames.Catalog.Application.Events;
 using br.com.fiap.cloudgames.Catalog.Application.Publishers;
 using br.com.fiap.cloudgames.Catalog.Application.UnitsOfWork;
@@ -16,15 +14,17 @@ namespace br.com.fiap.cloudgames.Catalog.Application.UseCases.Order.CreateOrder
         private readonly ILibraryRepository _libraryRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IOrderCreatedEventPublisher _orderCreatedEventPublisher;
+        private readonly ICurrentUser _currentUser;
 
         public CreateOrderUseCase(IOrderRepository orderRepository, IGameRepository gameRepository, 
-            ILibraryRepository libraryRepository, IUnitOfWork unitOfWork, IOrderCreatedEventPublisher orderCreatedEventPublisher)
+            ILibraryRepository libraryRepository, IUnitOfWork unitOfWork, IOrderCreatedEventPublisher orderCreatedEventPublisher, ICurrentUser currentUser)
         {
             _orderRepository = orderRepository;
             _gameRepository = gameRepository;
             _libraryRepository = libraryRepository;
             _unitOfWork = unitOfWork;
             _orderCreatedEventPublisher = orderCreatedEventPublisher;
+            _currentUser = currentUser;
         }
 
         public async Task<CreateOrderResponse> ExecuteAsync(CreateOrderRequest request)
@@ -50,7 +50,7 @@ namespace br.com.fiap.cloudgames.Catalog.Application.UseCases.Order.CreateOrder
                  throw new ApplicationException("One or more games not found");
              
              //Check if user has games already (its all or nothing, one game owned cancel all others)
-             var library = await _libraryRepository.GetByIdAsync(request.UserId);
+             var library = await _libraryRepository.GetByIdAsync(_currentUser.UserId);
              if(library != null && library.OwnedGames.Any(x => gameIds.Contains(x.GameId)))
                  throw new ApplicationException("User already owns one or more of the selected games");
              
@@ -62,7 +62,7 @@ namespace br.com.fiap.cloudgames.Catalog.Application.UseCases.Order.CreateOrder
                  items.Add(game.Title, game.Price.PriceValue);
                  orderItems.Add(new OrderItem(game.Id, game.Price));
              }
-             var order = br.com.fiap.cloudgames.Catalog.Domain.Aggregates.Order.Create(request.UserId, orderItems);
+             var order = br.com.fiap.cloudgames.Catalog.Domain.Aggregates.Order.Create(_currentUser.UserId, orderItems);
              try
              {
                  await _unitOfWork.BeginTransactionAsync();
@@ -81,9 +81,9 @@ namespace br.com.fiap.cloudgames.Catalog.Application.UseCases.Order.CreateOrder
                  EventId = Guid.NewGuid(),
                  OrderId = order.Id,
                  TotalAmount = order.TotalAmount.PriceValue,
-                 UserId = request.UserId,
-                 Name = "",
-                 Email = ""
+                 UserId = _currentUser.UserId,
+                 Name = _currentUser.Name,
+                 Email = _currentUser.Email
              });
              
              return new CreateOrderResponse()

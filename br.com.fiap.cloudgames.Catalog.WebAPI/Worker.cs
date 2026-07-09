@@ -1,21 +1,18 @@
-using br.com.fiap.cloudgames.Catalog.Infrastructure.Messagging;
-using br.com.fiap.cloudgames.Catalog.Infrastructure.Messagging.Consumers;
+using br.com.fiap.cloudgames.Catalog.Application.Consumers;
 
 namespace br.com.fiap.cloudgames.Catalog.WebAPI;
 
 public class Worker : BackgroundService
 {
     private readonly ILogger<Worker> _logger;
-    private readonly PaymentProcessedEventConsumer _paymentProcessedEventConsumer;
-    private readonly PaymentFailedEventConsumer _paymentFailedEventConsumer;
+    IServiceScopeFactory _scopeFactory;
+    private readonly IPaymentProcessedEventConsumer _paymentProcessedEventConsumer;
 
     public Worker(ILogger<Worker> logger,
-        PaymentProcessedEventConsumer paymentProcessedEventConsumer, 
-        PaymentFailedEventConsumer paymentFailedEventConsumer)
+        IServiceScopeFactory scopeFactory)
     {
         _logger = logger;
-        _paymentProcessedEventConsumer = paymentProcessedEventConsumer;
-        _paymentFailedEventConsumer = paymentFailedEventConsumer;
+        _scopeFactory = scopeFactory;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -23,11 +20,13 @@ public class Worker : BackgroundService
         try
         {
             _logger.LogInformation("Starting Worker");
+            using var scope = _scopeFactory.CreateScope();
+            var _paymentProcessedEventConsumer = scope.ServiceProvider
+                .GetRequiredService<IPaymentProcessedEventConsumer>();
 
-            await Task.WhenAll(
-                _paymentProcessedEventConsumer.ConsumeAsync(),
-                _paymentFailedEventConsumer.ConsumeAsync());
-            
+            await _paymentProcessedEventConsumer.ConsumeAsync();
+
+
             await Task.Delay(Timeout.Infinite, stoppingToken);
             _logger.LogInformation("Stopping Worker");
         }
@@ -38,7 +37,6 @@ public class Worker : BackgroundService
         finally
         {
             await _paymentProcessedEventConsumer.DisposeAsync();
-            await _paymentFailedEventConsumer.DisposeAsync();
         }
     }
 }
