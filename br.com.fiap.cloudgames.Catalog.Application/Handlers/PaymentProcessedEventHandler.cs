@@ -23,6 +23,7 @@ public class PaymentProcessedEventHandler
     {
         _orderRepository = orderRepository;
         _libraryRepository = libraryRepository;
+        _gameRepository = gameRepository;
         _unitOfWork = unitOfWork;
         _logger = logger;
     }
@@ -83,7 +84,7 @@ public class PaymentProcessedEventHandler
         {
             library.AddGame(new OwnedGame(game.Id, order.Id, DateTime.Now));
         }
-        _libraryRepository.UpdateAsync(library);
+        await _libraryRepository.UpdateAsync(library);
     }
 
     public async Task RejectOrder(Order order)

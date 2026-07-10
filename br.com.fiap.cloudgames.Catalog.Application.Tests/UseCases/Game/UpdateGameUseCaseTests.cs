@@ -61,7 +61,7 @@ namespace br.com.fiap.cloudgames.Catalog.Application.Tests.UseCases.Game
         }
 
         [Fact]
-        public async Task ExecuteAsync_WhenAnyPlatformIsInvalid_ShouldThrow()
+        public async Task ExecuteAsync_WhenPriceIsInvalid_ShouldThrow()
         {
             var uow = new Mock<IUnitOfWork>(MockBehavior.Strict);
             var repo = new Mock<IGameRepository>(MockBehavior.Strict);
@@ -69,9 +69,10 @@ namespace br.com.fiap.cloudgames.Catalog.Application.Tests.UseCases.Game
             var sut = new UpdateGameUseCase(uow.Object, repo.Object, logger.Object);
 
             var request = ApplicationTestData.ValidUpdateGameRequest();
+            request.Price = -1;
 
-            var ex = await Assert.ThrowsAsync<ApplicationException>(() => sut.ExecuteAsync(request));
-            Assert.Contains("Invalid platform", ex.Message);
+            var ex = await Assert.ThrowsAsync<br.com.fiap.cloudgames.Catalog.Domain.Exceptions.DomainException>(() => sut.ExecuteAsync(request));
+            Assert.Contains("Price can't be negative.", ex.Errors);
         }
 
         [Fact]

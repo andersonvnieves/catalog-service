@@ -182,9 +182,9 @@ namespace br.com.fiap.cloudgames.Catalog.Domain.Tests.Aggregates
         }
 
         [Fact]
-        public void CreateGame_WhenPlatformsIsNullOrEmpty_ShouldThrow()
+        public void CreateGame_WhenPriceIsNull_ShouldThrow()
         {
-            var ex1 = Assert.Throws<DomainException>(() =>
+            var ex = Assert.Throws<DomainException>(() =>
                 Game.CreateGame(
                     title: "title",
                     description: "desc",
@@ -195,22 +195,8 @@ namespace br.com.fiap.cloudgames.Catalog.Domain.Tests.Aggregates
                     gameModes: DomainTestData.ValidGameModes(),
                     publisher: DomainTestData.ValidPublisher(),
                     developers: DomainTestData.ValidDevelopers(),
-                    price: DomainTestData.ValidPrice()));
-            Assert.Contains("At least one Platform is required.", ex1.Errors);
-
-            var ex2 = Assert.Throws<DomainException>(() =>
-                Game.CreateGame(
-                    title: "title",
-                    description: "desc",
-                    story: "story",
-                    franchise: "franchise",
-                    releaseDate: DateOnly.FromDateTime(DateTime.Now.AddDays(-1)),
-                    ageRating: AgeRating.LIVRE,
-                    gameModes: DomainTestData.ValidGameModes(),
-                    publisher: DomainTestData.ValidPublisher(),
-                    developers: DomainTestData.ValidDevelopers(),
-                    price: DomainTestData.ValidPrice()));
-            Assert.Contains("At least one Platform is required.", ex2.Errors);
+                    price: null!));
+            Assert.Contains("Game must have a price.", ex.Errors);
         }
     }
 }
