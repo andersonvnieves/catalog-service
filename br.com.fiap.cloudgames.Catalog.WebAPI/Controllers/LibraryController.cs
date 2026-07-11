@@ -8,14 +8,13 @@ namespace br.com.fiap.cloudgames.Catalog.WebAPI.Controllers
     public class LibraryController : Controller
     {
         private readonly RetrieveLibraryUseCase _retrieveLibraryUseCase;
-        private const string BASIC_ROLE = "user";
 
         public LibraryController(RetrieveLibraryUseCase retrieveLibraryUseCase)
         {
             _retrieveLibraryUseCase = retrieveLibraryUseCase;
         }
         
-        [Authorize(Roles = BASIC_ROLE)]
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> Get()
         {

@@ -72,19 +72,16 @@ public class PaymentProcessedEventHandler
 
         // Handle Library
         var library = await _libraryRepository.GetByIdAsync(order.UserId);
-        if (library == null)
-        {
-            //Create User Library
-            library = br.com.fiap.cloudgames.Catalog.Domain.Aggregates.Library.Create(order.UserId);
-            await _libraryRepository.AddAsync(library);
-        }
+        var isNewLibrary = library is null;
 
-        //Add Game to User Library
+        if (isNewLibrary)
+            library = Library.Create(order.UserId);
+
         foreach (var game in games)
-        {
-            library.AddGame(new OwnedGame(game.Id, order.Id, DateTime.Now));
-        }
-        await _libraryRepository.UpdateAsync(library);
+            library.AddGame(new OwnedGame(game.Id, order.Id, DateTime.UtcNow));
+
+        if (isNewLibrary)
+            await _libraryRepository.AddAsync(library);
     }
 
     public async Task RejectOrder(Order order)
