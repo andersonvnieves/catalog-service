@@ -15,7 +15,14 @@ public class PaymentProcessedEventConsumer: RabbitMqMessageConsumer<PaymentProce
         RabbitMqConnection rabbitMqConnection, 
         PaymentProcessedEventHandler handler, 
         IOptions<RabbitMqSettings> options) 
-        :base(rabbitMqConnection, logger, options.Value.PaymentProcessedEvent.Exchange, options.Value.PaymentProcessedEvent.RoutingKey)
+        :base(
+            rabbitMqConnection,
+            logger,
+            options.Value.PaymentProcessedEvent.Exchange,
+            options.Value.PaymentProcessedEvent.RoutingKey,
+            string.IsNullOrWhiteSpace(options.Value.PaymentProcessedEvent.QueueName)
+                ? "catalog.payment.processed"
+                : options.Value.PaymentProcessedEvent.QueueName)
     {
         _handler = handler;
     }

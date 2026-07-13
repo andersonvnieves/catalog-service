@@ -6,7 +6,6 @@ public class Worker : BackgroundService
 {
     private readonly ILogger<Worker> _logger;
     IServiceScopeFactory _scopeFactory;
-    private readonly IPaymentProcessedEventConsumer _paymentProcessedEventConsumer;
 
     public Worker(ILogger<Worker> logger,
         IServiceScopeFactory scopeFactory)
@@ -17,16 +16,15 @@ public class Worker : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
+        _logger.LogInformation("Starting Worker");
+        using var scope = _scopeFactory.CreateScope();
+
+        var consumer = scope.ServiceProvider
+               .GetRequiredService<IPaymentProcessedEventConsumer>();
+
         try
         {
-            _logger.LogInformation("Starting Worker");
-            using var scope = _scopeFactory.CreateScope();
-            var _paymentProcessedEventConsumer = scope.ServiceProvider
-                .GetRequiredService<IPaymentProcessedEventConsumer>();
-
-            await _paymentProcessedEventConsumer.ConsumeAsync();
-
-
+            await consumer.ConsumeAsync();
             await Task.Delay(Timeout.Infinite, stoppingToken);
             _logger.LogInformation("Stopping Worker");
         }
@@ -36,7 +34,7 @@ public class Worker : BackgroundService
         }
         finally
         {
-            await _paymentProcessedEventConsumer.DisposeAsync();
+            await consumer.DisposeAsync();
         }
     }
 }

@@ -15,17 +15,20 @@ public abstract class RabbitMqMessageConsumer<T> : IMessageConsumer, IAsyncDispo
 
     private readonly string _exchange;
     private readonly string _routingKey;
+    private readonly string _queueName;
 
     protected RabbitMqMessageConsumer(
         RabbitMqConnection rabbitConnection,
         ILogger<T> logger,
         string exchange,
-        string routingKey)
+        string routingKey,
+        string queueName)
     {
         _rabbitConnection = rabbitConnection;
         _logger = logger;
         _exchange = exchange;
         _routingKey = routingKey;
+        _queueName = queueName;
     }
 
     public async Task ConsumeAsync()
@@ -41,13 +44,13 @@ public abstract class RabbitMqMessageConsumer<T> : IMessageConsumer, IAsyncDispo
             durable: true);
 
         await _channel.QueueDeclareAsync(
-            queue: _routingKey,
+            queue: _queueName,
             durable: true,
             exclusive: false,
             autoDelete: false);
 
         await _channel.QueueBindAsync(
-            queue: _routingKey,
+            queue: _queueName,
             exchange: _exchange,
             routingKey: _routingKey);
 
@@ -77,7 +80,7 @@ public abstract class RabbitMqMessageConsumer<T> : IMessageConsumer, IAsyncDispo
         };
 
         await _channel.BasicConsumeAsync(
-            queue: _routingKey,
+            queue: _queueName,
             autoAck: false,
             consumer: rabbitConsumer);
     }

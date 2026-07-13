@@ -29,7 +29,8 @@ public class PaymentProcessedEventHandler
     }
     
     public async Task HandleAsync(PaymentProcessedEvent paymentProcessedEvent)
-    {        
+    {
+        _logger.LogInformation($"Processing Event: {paymentProcessedEvent.EventId}");
         await _unitOfWork.BeginTransactionAsync();
         try
         {

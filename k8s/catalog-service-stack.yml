@@ -21,8 +21,10 @@ data:
   jwt-token-ttl: "10"
   order-created-exchange: fgc
   order-created-routing-key: order.created
+  order-created-queue-name: order.created
   payment-processed-exchange: fgc
   payment-processed-routing-key: payment.processed
+  payment-processed-queue-name: catalog.payment.processed
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -115,10 +117,14 @@ spec:
               valueFrom: { configMapKeyRef: { name: catalog-api-config, key: order-created-exchange } }
             - name: RabbitMQ__OrderCreatedEvent__RoutingKey
               valueFrom: { configMapKeyRef: { name: catalog-api-config, key: order-created-routing-key } }
+            - name: RabbitMQ__OrderCreatedEvent__QueueName
+              valueFrom: { configMapKeyRef: { name: catalog-api-config, key: order-created-queue-name } }
             - name: RabbitMQ__PaymentProcessedEvent__Exchange
               valueFrom: { configMapKeyRef: { name: catalog-api-config, key: payment-processed-exchange } }
             - name: RabbitMQ__PaymentProcessedEvent__RoutingKey
               valueFrom: { configMapKeyRef: { name: catalog-api-config, key: payment-processed-routing-key } }
+            - name: RabbitMQ__PaymentProcessedEvent__QueueName
+              valueFrom: { configMapKeyRef: { name: catalog-api-config, key: payment-processed-queue-name } }
 ---
 apiVersion: v1
 kind: Service

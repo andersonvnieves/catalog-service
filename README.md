@@ -31,8 +31,10 @@ $env:Jwt__Key = "<CHAVE_JWT>"
 $env:RabbitMQ__URI = "amqp://<USUARIO>:<SENHA>@localhost:5672/"
 $env:RabbitMQ__OrderCreatedEvent__Exchange = "fgc"
 $env:RabbitMQ__OrderCreatedEvent__RoutingKey = "order.created"
+$env:RabbitMQ__OrderCreatedEvent__QueueName = "order.created"
 $env:RabbitMQ__PaymentProcessedEvent__Exchange = "fgc"
 $env:RabbitMQ__PaymentProcessedEvent__RoutingKey = "payment.processed"
+$env:RabbitMQ__PaymentProcessedEvent__QueueName = "catalog.payment.processed"
 ```
 
 ## Executar localmente

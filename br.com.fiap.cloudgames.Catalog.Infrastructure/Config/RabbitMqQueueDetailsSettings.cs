@@ -8,5 +8,6 @@ namespace br.com.fiap.cloudgames.Catalog.Infrastructure.Config
     {
         public required string Exchange { get; set; }
         public required string RoutingKey { get; set; }
+        public string QueueName { get; set; } = string.Empty;
     }
 }
