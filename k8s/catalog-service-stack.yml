@@ -11,7 +11,6 @@ stringData:
   connection-string: "Server=catalog-db-service;Database=FGC_Catalog;User Id=sa;Password=rohPav-juKmeb-DIhku9!;TrustServerCertificate=True"
   jwt-key: "8594df0eb5ecb4c96f8824462cc7d2e1885c138908f2f7b4357af54b72ab2ed6"
   rabbitmq-uri: "amqp://admin:admin123@rabbitmq-service:5672/"
-  newrelic-key: "NRAK-LWHDWR3LJJ8QODPUSPN8YQDG3KC"
 ---
 apiVersion: v1
 kind: ConfigMap
