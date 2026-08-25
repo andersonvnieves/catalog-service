@@ -9,7 +9,7 @@ namespace br.com.fiap.cloudgames.Catalog.Domain.Repositories
     {
         Task AddAsync(Game game);
         Task<Game?> GetByIdAsync(Guid id);
-        void Update(Game game);
+        Task UpdateAsync(Game game);
         Task<IEnumerable<Game>> GetByIdsAsync(IEnumerable<Guid> ids);       
     }
 }

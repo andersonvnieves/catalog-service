@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Text.Json;
 
-namespace br.com.fiap.cloudgames.Catalog.Infrastructure.Persistence.Configurations
+namespace br.com.fiap.cloudgames.Catalog.Infrastructure.Persistence.Relational.Configurations
 {
     public class OrderConfiguration : IEntityTypeConfiguration<Order>
     {

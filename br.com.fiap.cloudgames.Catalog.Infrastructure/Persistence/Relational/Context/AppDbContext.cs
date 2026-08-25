@@ -1,8 +1,8 @@
 using br.com.fiap.cloudgames.Catalog.Domain.Aggregates;
-using br.com.fiap.cloudgames.Catalog.Infrastructure.Persistence.Configurations;
+using br.com.fiap.cloudgames.Catalog.Infrastructure.Persistence.Relational.Configurations;
 using Microsoft.EntityFrameworkCore;
 
-namespace br.com.fiap.cloudgames.Catalog.Infrastructure.Persistence.Context;
+namespace br.com.fiap.cloudgames.Catalog.Infrastructure.Persistence.Relational.Context;
 
 public class AppDbContext : DbContext
 {
@@ -13,11 +13,9 @@ public class AppDbContext : DbContext
     {
         base.OnModelCreating(modelBuilder);
         modelBuilder.ApplyConfiguration(new GameConfiguration());
-        modelBuilder.ApplyConfiguration(new LibraryConfiguration());
         modelBuilder.ApplyConfiguration(new OrderConfiguration());
     }
     
     public DbSet<Game> Games { get; set; }
-    public DbSet<Library> Libraries { get; set; }
     public DbSet<Order> Orders { get; set; }
 }

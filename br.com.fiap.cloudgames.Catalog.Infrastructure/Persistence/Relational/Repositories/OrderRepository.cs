@@ -1,9 +1,9 @@
 ﻿using br.com.fiap.cloudgames.Catalog.Domain.Aggregates;
 using br.com.fiap.cloudgames.Catalog.Domain.Repositories;
-using br.com.fiap.cloudgames.Catalog.Infrastructure.Persistence.Context;
+using br.com.fiap.cloudgames.Catalog.Infrastructure.Persistence.Relational.Context;
 using Microsoft.EntityFrameworkCore;
 
-namespace br.com.fiap.cloudgames.Catalog.Infrastructure.Persistence.Repositories
+namespace br.com.fiap.cloudgames.Catalog.Infrastructure.Persistence.Relational.Repositories
 {
     public class OrderRepository : IOrderRepository
     {

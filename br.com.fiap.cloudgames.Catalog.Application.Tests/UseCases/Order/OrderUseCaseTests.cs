@@ -29,7 +29,7 @@ public class OrderUseCaseTests
         var request = new CreateOrderRequest { GameIds = [game.Id.ToString()] };
 
         games.Setup(x => x.GetByIdsAsync(It.Is<IEnumerable<Guid>>(ids => ids.Single() == game.Id))).ReturnsAsync([game]);
-        libraries.Setup(x => x.GetByIdAsync(userId)).ReturnsAsync((br.com.fiap.cloudgames.Catalog.Domain.Aggregates.Library?)null);
+        libraries.Setup(x => x.GetByUserIdAsync(userId)).ReturnsAsync((br.com.fiap.cloudgames.Catalog.Domain.Aggregates.Library?)null);
         unitOfWork.Setup(x => x.BeginTransactionAsync()).Returns(Task.CompletedTask);
         orders.Setup(x => x.AddAsync(It.IsAny<br.com.fiap.cloudgames.Catalog.Domain.Aggregates.Order>())).Returns(Task.CompletedTask);
         unitOfWork.Setup(x => x.CommitAsync()).Returns(Task.CompletedTask);

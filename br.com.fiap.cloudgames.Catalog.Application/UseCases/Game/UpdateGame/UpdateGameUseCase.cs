@@ -86,7 +86,7 @@ namespace br.com.fiap.cloudgames.Catalog.Application.UseCases.Game.UpdateGame
                     developers,
                     price);
 
-                _gameRepository.Update(game);
+                await _gameRepository.UpdateAsync(game);
                 await _unitOfWork.CommitAsync();
 
                 _logger.LogInformation("Game updated successfully. GameId={GameId}, Title={Title}", game.Id, game.Title);

@@ -3,17 +3,20 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using br.com.fiap.cloudgames.Catalog.Infrastructure.Persistence.Context;
+using br.com.fiap.cloudgames.Catalog.Infrastructure.Persistence.Relational.Context;
 
 #nullable disable
 
 namespace br.com.fiap.cloudgames.Catalog.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260824194805_RemoveLibraryTable")]
+    partial class RemoveLibraryTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -62,17 +65,6 @@ namespace br.com.fiap.cloudgames.Catalog.Infrastructure.Persistence.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Games");
-                });
-
-            modelBuilder.Entity("br.com.fiap.cloudgames.Catalog.Domain.Aggregates.Library", b =>
-                {
-                    b.Property<Guid>("UserId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("UserId");
-
-                    b.ToTable("Libraries");
                 });
 
             modelBuilder.Entity("br.com.fiap.cloudgames.Catalog.Domain.Aggregates.Order", b =>
@@ -166,34 +158,6 @@ namespace br.com.fiap.cloudgames.Catalog.Infrastructure.Persistence.Migrations
 
                     b.Navigation("Publisher")
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("br.com.fiap.cloudgames.Catalog.Domain.Aggregates.Library", b =>
-                {
-                    b.OwnsMany("br.com.fiap.cloudgames.Catalog.Domain.Entities.OwnedGame", "OwnedGames", b1 =>
-                        {
-                            b1.Property<Guid>("UserId")
-                                .HasColumnType("uniqueidentifier");
-
-                            b1.Property<Guid>("GameId")
-                                .ValueGeneratedOnAdd()
-                                .HasColumnType("uniqueidentifier");
-
-                            b1.Property<Guid>("OrderId")
-                                .HasColumnType("uniqueidentifier");
-
-                            b1.Property<DateTime>("PurchaseDate")
-                                .HasColumnType("datetime2");
-
-                            b1.HasKey("UserId", "GameId");
-
-                            b1.ToTable("OwnedGame");
-
-                            b1.WithOwner()
-                                .HasForeignKey("UserId");
-                        });
-
-                    b.Navigation("OwnedGames");
                 });
 
             modelBuilder.Entity("br.com.fiap.cloudgames.Catalog.Domain.Aggregates.Order", b =>

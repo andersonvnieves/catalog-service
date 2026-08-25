@@ -1,9 +1,9 @@
 ﻿using br.com.fiap.cloudgames.Catalog.Domain.Aggregates;
 using br.com.fiap.cloudgames.Catalog.Domain.Repositories;
-using br.com.fiap.cloudgames.Catalog.Infrastructure.Persistence.Context;
+using br.com.fiap.cloudgames.Catalog.Infrastructure.Persistence.Relational.Context;
 using Microsoft.EntityFrameworkCore;
 
-namespace br.com.fiap.cloudgames.Catalog.Infrastructure.Persistence.Repositories
+namespace br.com.fiap.cloudgames.Catalog.Infrastructure.Persistence.Relational.Repositories
 {
     public class GameRepository : IGameRepository
     {
@@ -26,7 +26,7 @@ namespace br.com.fiap.cloudgames.Catalog.Infrastructure.Persistence.Repositories
             return await _games.FirstOrDefaultAsync(g => g.Id == id);
         }
 
-        public void Update(Game game)
+        public async Task UpdateAsync(Game game)
         {
             _games.Update(game);
         }
