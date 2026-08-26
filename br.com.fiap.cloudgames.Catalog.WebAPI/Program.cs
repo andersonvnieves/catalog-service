@@ -25,6 +25,7 @@ using br.com.fiap.cloudgames.Catalog.Infrastructure.Persistence.Relational.Repos
 using br.com.fiap.cloudgames.Catalog.Infrastructure.Persistence.Relational.Repositories.Cached;
 using br.com.fiap.cloudgames.Catalog.WebAPI;
 using br.com.fiap.cloudgames.Catalog.WebAPI.Middlewares;
+using br.com.fiap.cloudgames.Catalog.WebAPI.Setup;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
@@ -174,11 +175,7 @@ builder.Services.AddHostedService<Worker>();
 var app = builder.Build();
 
 //Run Migrations
-using (var scope = app.Services.CreateScope())
-{
-    var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    await dbContext.Database.MigrateAsync();
-}
+await app.InitializeDatabaseAsync();
 
 app.UseRequestLoggingMiddleware();
 app.UseErrorHandlingMiddleware();
