@@ -33,6 +33,7 @@ using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Serializers;
 using MongoDB.Driver;
+using Prometheus;
 using StackExchange.Redis;
 using System.Security.Claims;
 using System.Text;
@@ -177,6 +178,8 @@ var app = builder.Build();
 //Run Migrations
 await app.InitializeDatabaseAsync();
 
+app.UseRouting();
+
 app.UseRequestLoggingMiddleware();
 app.UseErrorHandlingMiddleware();
 
@@ -192,6 +195,9 @@ if (app.Environment.IsDevelopment())
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseMetricServer();
+app.UseHttpMetrics();
 
 app.MapControllers();
 

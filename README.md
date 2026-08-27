@@ -73,3 +73,7 @@ docker run --rm -p 8081:8080 fgc-catalog-service:latest
 ```
 
 Em contêiner, informe as mesmas configurações da seção anterior como variáveis de ambiente e use os hosts da rede Docker para SQL Server e RabbitMQ.
+
+
+
+docker build -t fgc-catalog-service:latest . 
