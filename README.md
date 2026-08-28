@@ -77,3 +77,7 @@ Em contêiner, informe as mesmas configurações da seção anterior como variá
 
 
 docker build -t fgc-catalog-service:latest . 
+
+
+
+k6 run -e TOKEN="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI4MmNiN2U1Yy1lNWY5LTRlN2ItOGUyMC1mNmM2OTE4OWY1YTgiLCJuYW1lIjoiRmlyc3ROYW1lIExhc3ROYW1lIiwiZW1haWwiOiJhZG1pbkBmZ2MuY29tIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiYWRtaW4iLCJleHAiOjE3ODc5NjE0NTIsImlzcyI6ImZnY2FwaSIsImF1ZCI6ImZnY2FwaSJ9.nCIaxkeToywHdyqImN6zlSadHZ1CyNN8r9ywJOVQrHY" ingest-games.js
