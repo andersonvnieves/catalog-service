@@ -16,6 +16,8 @@ Serviço de catálogo. Gerencia jogos, a biblioteca do usuário e a criação de
 - .NET SDK 10;
 - SQL Server na porta `1433`;
 - RabbitMQ na porta `5672` (painel: `15672`).
+- Redis na porta `6379`.
+- MongoDB na porta `27017`.
 
 Para iniciar toda a plataforma — incluindo essas dependências — use o [README da orquestração](https://github.com/andersonvnieves/orchestration/blob/main/README.md). Para executar apenas este serviço, deixe SQL Server e RabbitMQ disponíveis localmente.
 
@@ -35,6 +37,9 @@ $env:RabbitMQ__OrderCreatedEvent__QueueName = "order.created"
 $env:RabbitMQ__PaymentProcessedEvent__Exchange = "fgc"
 $env:RabbitMQ__PaymentProcessedEvent__RoutingKey = "payment.processed"
 $env:RabbitMQ__PaymentProcessedEvent__QueueName = "catalog.payment.processed"
+$env:Redis__ConnectionString = "<REDIS_IP>:6379,password=<SENHA>"
+$env:MongoDB__ConnectionString = "mongodb://<USUARIO>:<SENHA>@<MONGO_IP>:27017/?authSource=admin"
+$env:MongoDB__DatabaseName = "catalog_service"
 ```
 
 ## Executar localmente
@@ -74,10 +79,14 @@ docker run --rm -p 8081:8080 fgc-catalog-service:latest
 
 Em contêiner, informe as mesmas configurações da seção anterior como variáveis de ambiente e use os hosts da rede Docker para SQL Server e RabbitMQ.
 
+## Kubernetes
 
+```powershell
+kubectl apply -f k8s\catalog-service-stack.yml
+```
 
-docker build -t fgc-catalog-service:latest . 
+## K6 - Load tests
+```powershell
+k6 run -e TOKEN="<ADMIN_USER_TOKEN>" k6\ingest-games.js
+```
 
-
-
-k6 run -e TOKEN="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI4MmNiN2U1Yy1lNWY5LTRlN2ItOGUyMC1mNmM2OTE4OWY1YTgiLCJuYW1lIjoiRmlyc3ROYW1lIExhc3ROYW1lIiwiZW1haWwiOiJhZG1pbkBmZ2MuY29tIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiYWRtaW4iLCJleHAiOjE3ODc5NjE0NTIsImlzcyI6ImZnY2FwaSIsImF1ZCI6ImZnY2FwaSJ9.nCIaxkeToywHdyqImN6zlSadHZ1CyNN8r9ywJOVQrHY" ingest-games.js
