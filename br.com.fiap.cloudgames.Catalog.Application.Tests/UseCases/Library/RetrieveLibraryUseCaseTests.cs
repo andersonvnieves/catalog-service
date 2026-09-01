@@ -22,7 +22,7 @@ public class RetrieveLibraryUseCaseTests
         var games = new Mock<IGameRepository>(MockBehavior.Strict);
         var currentUser = new Mock<ICurrentUser>(MockBehavior.Strict);
         currentUser.SetupGet(x => x.UserId).Returns(userId);
-        libraries.Setup(x => x.GetByIdAsync(userId)).ReturnsAsync(library);
+        libraries.Setup(x => x.GetByUserIdAsync(userId)).ReturnsAsync(library);
         games.Setup(x => x.GetByIdsAsync(It.Is<IEnumerable<Guid>>(ids => ids.Single() == game.Id))).ReturnsAsync([game]);
 
         var response = await new RetrieveLibraryUseCase(libraries.Object, games.Object, currentUser.Object).ExecuteAsync();
@@ -38,7 +38,7 @@ public class RetrieveLibraryUseCaseTests
         var currentUser = new Mock<ICurrentUser>(MockBehavior.Strict);
         var userId = Guid.NewGuid();
         currentUser.SetupGet(x => x.UserId).Returns(userId);
-        libraries.Setup(x => x.GetByIdAsync(userId)).ReturnsAsync((br.com.fiap.cloudgames.Catalog.Domain.Aggregates.Library?)null);
+        libraries.Setup(x => x.GetByUserIdAsync(userId)).ReturnsAsync((br.com.fiap.cloudgames.Catalog.Domain.Aggregates.Library?)null);
 
         var exception = await Assert.ThrowsAsync<ApplicationException>(() => new RetrieveLibraryUseCase(libraries.Object, games.Object, currentUser.Object).ExecuteAsync());
 

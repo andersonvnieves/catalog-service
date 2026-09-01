@@ -50,7 +50,7 @@ namespace br.com.fiap.cloudgames.Catalog.Application.UseCases.Order.CreateOrder
                  throw new ApplicationException("One or more games not found");
              
              //Check if user has games already (its all or nothing, one game owned cancel all others)
-             var library = await _libraryRepository.GetByIdAsync(_currentUser.UserId);
+             var library = await _libraryRepository.GetByUserIdAsync(_currentUser.UserId);
              if(library != null && library.OwnedGames.Any(x => gameIds.Contains(x.GameId)))
                  throw new ApplicationException("User already owns one or more of the selected games");
              

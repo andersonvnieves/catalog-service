@@ -26,7 +26,7 @@ public class PaymentProcessedEventHandlerTests
         orders.Setup(x => x.GetByIdAsync(order.Id)).ReturnsAsync(order);
         orders.Setup(x => x.UpdateAsync(order)).Returns(Task.CompletedTask);
         games.Setup(x => x.GetByIdsAsync(It.IsAny<IEnumerable<Guid>>())).ReturnsAsync([game]);
-        libraries.Setup(x => x.GetByIdAsync(order.UserId)).ReturnsAsync((br.com.fiap.cloudgames.Catalog.Domain.Aggregates.Library?)null);
+        libraries.Setup(x => x.GetByUserIdAsync(order.UserId)).ReturnsAsync((br.com.fiap.cloudgames.Catalog.Domain.Aggregates.Library?)null);
         libraries.Setup(x => x.AddAsync(It.Is<br.com.fiap.cloudgames.Catalog.Domain.Aggregates.Library>(l => l.UserId == order.UserId))).Returns(Task.CompletedTask);
         libraries.Setup(x => x.UpdateAsync(It.Is<br.com.fiap.cloudgames.Catalog.Domain.Aggregates.Library>(l => l.OwnsGame(game.Id)))).Returns(Task.CompletedTask);
         unitOfWork.Setup(x => x.CommitAsync()).Returns(Task.CompletedTask);

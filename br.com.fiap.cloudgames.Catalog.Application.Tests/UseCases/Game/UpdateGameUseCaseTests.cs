@@ -115,7 +115,7 @@ namespace br.com.fiap.cloudgames.Catalog.Application.Tests.UseCases.Game
             request.Id = existingGame.Id.ToString();
 
             repo.Setup(x => x.GetByIdAsync(existingGame.Id)).ReturnsAsync(existingGame);
-            repo.Setup(x => x.Update(existingGame));
+            repo.Setup(x => x.UpdateAsync(existingGame));
             uow.Setup(x => x.CommitAsync()).Returns(Task.CompletedTask);
 
             var sut = new UpdateGameUseCase(uow.Object, repo.Object, logger.Object);
@@ -134,7 +134,7 @@ namespace br.com.fiap.cloudgames.Catalog.Application.Tests.UseCases.Game
             Assert.Contains("Publisher Inc", response.Publisher);
 
             repo.Verify(x => x.GetByIdAsync(existingGame.Id), Times.Once);
-            repo.Verify(x => x.Update(existingGame), Times.Once);
+            repo.Verify(x => x.UpdateAsync(existingGame), Times.Once);
             uow.Verify(x => x.CommitAsync(), Times.Once);
         }
     }

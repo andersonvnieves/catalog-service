@@ -9,6 +9,6 @@ namespace br.com.fiap.cloudgames.Catalog.Domain.Repositories
     {
         Task AddAsync(Library library);
         Task UpdateAsync(Library library);
-        Task<Library?> GetByIdAsync(Guid id);
+        Task<Library?> GetByUserIdAsync(Guid id);
     }
 }

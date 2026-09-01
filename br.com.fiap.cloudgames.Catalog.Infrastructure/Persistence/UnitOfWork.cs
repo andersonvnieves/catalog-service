@@ -1,5 +1,5 @@
 using br.com.fiap.cloudgames.Catalog.Application.UnitsOfWork;
-using br.com.fiap.cloudgames.Catalog.Infrastructure.Persistence.Context;
+using br.com.fiap.cloudgames.Catalog.Infrastructure.Persistence.Relational.Context;
 using Microsoft.EntityFrameworkCore.Storage;
 
 namespace br.com.fiap.cloudgames.Catalog.Infrastructure.Persistence;

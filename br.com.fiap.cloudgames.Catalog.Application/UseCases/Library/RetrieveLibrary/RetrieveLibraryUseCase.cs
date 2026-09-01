@@ -21,7 +21,7 @@ namespace br.com.fiap.cloudgames.Catalog.Application.UseCases.Library.RetrieveLi
 
         public async Task<RetrieveLibraryResponse> ExecuteAsync()
         {
-            var library = await _libraryRepository.GetByIdAsync(_currentUser.UserId);
+            var library = await _libraryRepository.GetByUserIdAsync(_currentUser.UserId);
             if(library == null)
                 throw new ApplicationException("No Library found");
             

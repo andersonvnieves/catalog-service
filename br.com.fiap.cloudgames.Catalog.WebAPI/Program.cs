@@ -11,19 +11,30 @@ using br.com.fiap.cloudgames.Catalog.Application.UseCases.Order.CancelOrder;
 using br.com.fiap.cloudgames.Catalog.Application.UseCases.Order.CompleteOrder;
 using br.com.fiap.cloudgames.Catalog.Application.UseCases.Order.CreateOrder;
 using br.com.fiap.cloudgames.Catalog.Domain.Repositories;
+using br.com.fiap.cloudgames.Catalog.Infrastructure.Cache;
 using br.com.fiap.cloudgames.Catalog.Infrastructure.Config;
 using br.com.fiap.cloudgames.Catalog.Infrastructure.Identity;
 using br.com.fiap.cloudgames.Catalog.Infrastructure.Messagging;
 using br.com.fiap.cloudgames.Catalog.Infrastructure.Messagging.Consumers;
 using br.com.fiap.cloudgames.Catalog.Infrastructure.Messaging.Publishers;
 using br.com.fiap.cloudgames.Catalog.Infrastructure.Persistence;
-using br.com.fiap.cloudgames.Catalog.Infrastructure.Persistence.Context;
-using br.com.fiap.cloudgames.Catalog.Infrastructure.Persistence.Repositories;
+using br.com.fiap.cloudgames.Catalog.Infrastructure.Persistence.MongoDB.Configurations;
+using br.com.fiap.cloudgames.Catalog.Infrastructure.Persistence.MongoDB.Repositories;
+using br.com.fiap.cloudgames.Catalog.Infrastructure.Persistence.Relational.Context;
+using br.com.fiap.cloudgames.Catalog.Infrastructure.Persistence.Relational.Repositories;
+using br.com.fiap.cloudgames.Catalog.Infrastructure.Persistence.Relational.Repositories.Cached;
 using br.com.fiap.cloudgames.Catalog.WebAPI;
 using br.com.fiap.cloudgames.Catalog.WebAPI.Middlewares;
+using br.com.fiap.cloudgames.Catalog.WebAPI.Setup;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization;
+using MongoDB.Bson.Serialization.Serializers;
+using MongoDB.Driver;
+using Prometheus;
+using StackExchange.Redis;
 using System.Security.Claims;
 using System.Text;
 
@@ -41,10 +52,24 @@ builder.Logging.AddSimpleConsole(options =>
 //Settings
 builder.Services.Configure<JwtTokenSettings>(builder.Configuration.GetSection("Jwt"));
 builder.Services.Configure<RabbitMqSettings>(builder.Configuration.GetSection("RabbitMQ"));
+builder.Services.Configure<RedisSettings>(builder.Configuration.GetSection("Redis"));
+builder.Services.Configure<MongoDBSettings>(builder.Configuration.GetSection("MongoDB"));
+
 
 //Add Db Context
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("Default")), ServiceLifetime.Scoped );
+
+//RedisConnection
+var redisConnectionString = builder.Configuration["Redis:connectionString"]
+    ?? throw new InvalidOperationException("Redis Settins is not configured");
+
+builder.Services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect(redisConnectionString));
+builder.Services.AddScoped<IDatabase>(provider =>
+{
+    var multiplexer = provider.GetRequiredService<IConnectionMultiplexer>();
+    return multiplexer.GetDatabase();
+});
 
 //Authentication
 builder.Services.AddAuthentication(options =>
@@ -77,10 +102,36 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddAuthorization();
 builder.Services.AddScoped<ICurrentUser, JwtCurrentUser>();
 
-//Repositories
-builder.Services.AddScoped<IGameRepository, GameRepository>();
-builder.Services.AddScoped<ILibraryRepository, LibraryRepository>();
+//Cache Provider
+builder.Services.AddScoped<ICacheProvider, RedisCacheProvider>();
+
+
+//MongoDB
+builder.Services.AddSingleton<IMongoClient>(sp =>
+    new MongoClient(builder.Configuration["MongoDB:ConnectionString"]));
+
+builder.Services.AddScoped<IMongoDatabase>(sp => {
+    var client = sp.GetRequiredService<IMongoClient>();
+    return client.GetDatabase(builder.Configuration["MongoDB:DatabaseName"]);
+});
+
+BsonSerializer.RegisterSerializer(new GuidSerializer(GuidRepresentation.Standard));
+
+LibraryMongoMap.Configure();
+
+//Relational Repositories
+builder.Services.AddScoped<GameRepository>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+
+//Mongo Repositories
+builder.Services.AddScoped<ILibraryRepository, LibraryRepository>();
+
+//Cached Repositories
+builder.Services.AddScoped<IGameRepository>(privider => 
+    new CachedGameRepository(
+        privider.GetRequiredService<ICacheProvider>(),
+        privider.GetRequiredService<GameRepository>()
+    ));
 
 //UnitOfWork
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
@@ -125,11 +176,9 @@ builder.Services.AddHostedService<Worker>();
 var app = builder.Build();
 
 //Run Migrations
-using (var scope = app.Services.CreateScope())
-{
-    var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    await dbContext.Database.MigrateAsync();
-}
+await app.InitializeDatabaseAsync();
+
+app.UseRouting();
 
 app.UseRequestLoggingMiddleware();
 app.UseErrorHandlingMiddleware();
@@ -146,6 +195,9 @@ if (app.Environment.IsDevelopment())
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseMetricServer();
+app.UseHttpMetrics();
 
 app.MapControllers();
 

@@ -72,7 +72,7 @@ public class PaymentProcessedEventHandler
             throw new ApplicationException("One or more games not found");
 
         // Handle Library
-        var library = await _libraryRepository.GetByIdAsync(order.UserId);
+        var library = await _libraryRepository.GetByUserIdAsync(order.UserId);
         var isNewLibrary = library is null;
 
         if (isNewLibrary)
