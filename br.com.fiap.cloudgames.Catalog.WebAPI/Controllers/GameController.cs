@@ -1,5 +1,6 @@
 ﻿using br.com.fiap.cloudgames.Catalog.Application.UseCases.Game.CreateGame;
 using br.com.fiap.cloudgames.Catalog.Application.UseCases.Game.RetrieveGame;
+using br.com.fiap.cloudgames.Catalog.Application.UseCases.Game.SearchGame;
 using br.com.fiap.cloudgames.Catalog.Application.UseCases.Game.UpdateGame;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -13,14 +14,17 @@ namespace br.com.fiap.cloudgames.Catalog.WebAPI.Controllers
         private readonly CreateGameUseCase _createGameUseCase;
         private readonly RetrieveGameUseCase _retrieveGameUseCase;
         private readonly UpdateGameUseCase _updateGameUseCase;
+        private readonly SearchGameUseCase _searchGameUseCase;
         private const string ADMIN_ROLE = "admin";
         public GameController(CreateGameUseCase createGameUseCase,
             RetrieveGameUseCase retrieveGameUseCase,
-            UpdateGameUseCase updateGameUseCase)
+            UpdateGameUseCase updateGameUseCase,
+            SearchGameUseCase searchGameUseCase)
         {
             _createGameUseCase = createGameUseCase;
             _retrieveGameUseCase = retrieveGameUseCase;
             _updateGameUseCase = updateGameUseCase;
+            _searchGameUseCase = searchGameUseCase;
         }
 
         [Authorize(Roles = ADMIN_ROLE)]
@@ -35,6 +39,13 @@ namespace br.com.fiap.cloudgames.Catalog.WebAPI.Controllers
         public async Task<IActionResult> Get([FromQuery] String Id)
         {
             var result = await _retrieveGameUseCase.ExecuteAsync(new RetrieveGameRequest() { GameId = Id });
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        public async Task<IActionResult> Search([FromBody] SearchGameRequest request)
+        {
+            var result = await _searchGameUseCase.ExecuteAsync(request);
             return Ok(result);
         }
 

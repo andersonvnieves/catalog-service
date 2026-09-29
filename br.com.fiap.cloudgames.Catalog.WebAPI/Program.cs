@@ -37,6 +37,8 @@ using Prometheus;
 using StackExchange.Redis;
 using System.Security.Claims;
 using System.Text;
+using br.com.fiap.cloudgames.Catalog.Application.UseCases.Game.SearchGame;
+using br.com.fiap.cloudgames.Catalog.Infrastructure.Elasticsearch;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -54,6 +56,7 @@ builder.Services.Configure<JwtTokenSettings>(builder.Configuration.GetSection("J
 builder.Services.Configure<RabbitMqSettings>(builder.Configuration.GetSection("RabbitMQ"));
 builder.Services.Configure<RedisSettings>(builder.Configuration.GetSection("Redis"));
 builder.Services.Configure<MongoDBSettings>(builder.Configuration.GetSection("MongoDB"));
+builder.Services.Configure<ElasticsearchSettings>(builder.Configuration.GetSection("Elasticsearch"));
 
 
 //Add Db Context
@@ -119,6 +122,9 @@ BsonSerializer.RegisterSerializer(new GuidSerializer(GuidRepresentation.Standard
 
 LibraryMongoMap.Configure();
 
+//Elasticsearch
+builder.Services.AddSingleton<ElasticsearchProvider>();
+
 //Relational Repositories
 builder.Services.AddScoped<GameRepository>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
@@ -152,6 +158,7 @@ builder.Services.AddScoped<RetrieveLibraryUseCase>();
 builder.Services.AddScoped<CancelOrderUseCase>();
 builder.Services.AddScoped<CompleteOrderUseCase>();
 builder.Services.AddScoped<CreateOrderUseCase>();
+builder.Services.AddScoped<SearchGameUseCase>();
 
 builder.Services.AddControllers();
 
