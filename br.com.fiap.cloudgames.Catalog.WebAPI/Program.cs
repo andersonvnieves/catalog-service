@@ -10,7 +10,7 @@ using br.com.fiap.cloudgames.Catalog.Application.UseCases.Library.RetrieveLibrar
 using br.com.fiap.cloudgames.Catalog.Application.UseCases.Order.CancelOrder;
 using br.com.fiap.cloudgames.Catalog.Application.UseCases.Order.CompleteOrder;
 using br.com.fiap.cloudgames.Catalog.Application.UseCases.Order.CreateOrder;
-using br.com.fiap.cloudgames.Catalog.Domain.Repositories;
+using br.com.fiap.cloudgames.Catalog.Application.Repositories;
 using br.com.fiap.cloudgames.Catalog.Infrastructure.Cache;
 using br.com.fiap.cloudgames.Catalog.Infrastructure.Config;
 using br.com.fiap.cloudgames.Catalog.Infrastructure.Identity;
@@ -39,6 +39,7 @@ using System.Security.Claims;
 using System.Text;
 using br.com.fiap.cloudgames.Catalog.Application.UseCases.Game.SearchGame;
 using br.com.fiap.cloudgames.Catalog.Infrastructure.Elasticsearch;
+using br.com.fiap.cloudgames.Catalog.Infrastructure.Persistence.Relational.Repositories.Elasticsearch;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -128,15 +129,22 @@ builder.Services.AddSingleton<ElasticsearchProvider>();
 //Relational Repositories
 builder.Services.AddScoped<GameRepository>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+builder.Services.AddScoped<IGameSearchRepository, ElasticsearchGameSearchRepository>();
 
 //Mongo Repositories
 builder.Services.AddScoped<ILibraryRepository, LibraryRepository>();
 
-//Cached Repositories
-builder.Services.AddScoped<IGameRepository>(privider => 
+//Decorated Repositories
+builder.Services.AddScoped<ElasticsearchGameRepository>(provider => 
+    new ElasticsearchGameRepository(
+        provider.GetRequiredService<ElasticsearchProvider>(),
+        provider.GetRequiredService<GameRepository>()
+    ));
+
+builder.Services.AddScoped<IGameRepository>(provider => 
     new CachedGameRepository(
-        privider.GetRequiredService<ICacheProvider>(),
-        privider.GetRequiredService<GameRepository>()
+        provider.GetRequiredService<ICacheProvider>(),
+        provider.GetRequiredService<ElasticsearchGameRepository>()
     ));
 
 //UnitOfWork

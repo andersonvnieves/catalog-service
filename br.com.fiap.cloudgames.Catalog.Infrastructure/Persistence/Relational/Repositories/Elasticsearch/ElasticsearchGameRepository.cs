@@ -1,7 +1,6 @@
-using br.com.fiap.cloudgames.Catalog.Application.DTOs;
 using br.com.fiap.cloudgames.Catalog.Application.Mappers;
 using br.com.fiap.cloudgames.Catalog.Domain.Aggregates;
-using br.com.fiap.cloudgames.Catalog.Domain.Repositories;
+using br.com.fiap.cloudgames.Catalog.Application.Repositories;
 using br.com.fiap.cloudgames.Catalog.Infrastructure.Elasticsearch;
 
 namespace br.com.fiap.cloudgames.Catalog.Infrastructure.Persistence.Relational.Repositories.Elasticsearch;

@@ -42,10 +42,10 @@ namespace br.com.fiap.cloudgames.Catalog.WebAPI.Controllers
             return Ok(result);
         }
         
-        [HttpPost]
-        public async Task<IActionResult> Search([FromBody] SearchGameRequest request)
+        [HttpGet("search")]
+        public async Task<IActionResult> Search([FromQuery] String query)
         {
-            var result = await _searchGameUseCase.ExecuteAsync(request);
+            var result = await _searchGameUseCase.ExecuteAsync(new SearchGameRequest() { Query = query });
             return Ok(result);
         }
 

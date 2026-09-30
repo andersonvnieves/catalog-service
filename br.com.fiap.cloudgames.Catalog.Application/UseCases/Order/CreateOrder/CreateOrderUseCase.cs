@@ -3,7 +3,7 @@ using br.com.fiap.cloudgames.Catalog.Application.Events;
 using br.com.fiap.cloudgames.Catalog.Application.Publishers;
 using br.com.fiap.cloudgames.Catalog.Application.UnitsOfWork;
 using br.com.fiap.cloudgames.Catalog.Domain.Entities;
-using br.com.fiap.cloudgames.Catalog.Domain.Repositories;
+using br.com.fiap.cloudgames.Catalog.Application.Repositories;
 
 namespace br.com.fiap.cloudgames.Catalog.Application.UseCases.Order.CreateOrder
 {

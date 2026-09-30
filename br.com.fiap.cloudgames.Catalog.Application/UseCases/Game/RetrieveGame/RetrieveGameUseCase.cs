@@ -1,4 +1,4 @@
-﻿using br.com.fiap.cloudgames.Catalog.Domain.Repositories;
+﻿using br.com.fiap.cloudgames.Catalog.Application.Repositories;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;

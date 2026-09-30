@@ -3,13 +3,10 @@ using br.com.fiap.cloudgames.Catalog.Application.UnitsOfWork;
 using br.com.fiap.cloudgames.Catalog.Application.UseCases.Game.UpdateGame;
 using br.com.fiap.cloudgames.Catalog.Domain.Entities;
 using br.com.fiap.cloudgames.Catalog.Domain.Enums;
-using br.com.fiap.cloudgames.Catalog.Domain.Repositories;
+using br.com.fiap.cloudgames.Catalog.Application.Repositories;
 using br.com.fiap.cloudgames.Catalog.Domain.ValueObjects;
 using Microsoft.Extensions.Logging;
 using Moq;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace br.com.fiap.cloudgames.Catalog.Application.Tests.UseCases.Game
 {
