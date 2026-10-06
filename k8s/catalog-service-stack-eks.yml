@@ -17,6 +17,7 @@ stringData:
   mongodb-dbname: "catalog_service"
   redis-connection: "redis-service:6379,password=datgef-6zadci-nyZbud"
   redis-password: "datgef-6zadci-nyZbud"
+  elasticsearch-uri: "http://elasticsearch-service:9200"
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -31,6 +32,7 @@ data:
   payment-processed-exchange: fgc
   payment-processed-routing-key: payment.processed
   payment-processed-queue-name: catalog.payment.processed
+  elasticsearch-default-index: "games"
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -156,6 +158,48 @@ spec:
   selector: { app: redis }
   ports: [{ port: 6379, targetPort: 6379 }]
 ---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata: { name: elasticsearch-pvc, namespace: fgc }
+spec:
+  accessModes: [ReadWriteOnce]
+  storageClassName: gp2
+  resources:
+    requests: { storage: 1Gi }
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata: { name: elasticsearch, namespace: fgc }
+spec:
+  replicas: 1
+  selector: { matchLabels: { app: elasticsearch } }
+  template:
+    metadata: { labels: { app: elasticsearch } }
+    spec:
+      containers:
+        - name: elasticsearch
+          image: docker.elastic.co/elasticsearch/elasticsearch:8.11.3
+          ports:
+            - { containerPort: 9200, name: http }
+            - { containerPort: 9300, name: transport }
+          env:
+            - { name: discovery.type, value: "single-node" }
+            - { name: xpack.security.enabled, value: "false" }
+            - { name: ES_JAVA_OPTS, value: "-Xms512m -Xmx512m" }
+          volumeMounts:
+            - { name: elasticsearch-data, mountPath: /usr/share/elasticsearch/data }
+      volumes:
+        - name: elasticsearch-data, persistentVolumeClaim: { claimName: elasticsearch-pvc }
+---
+apiVersion: v1
+kind: Service
+metadata: { name: elasticsearch-service, namespace: fgc }
+spec:
+  selector: { app: elasticsearch }
+  ports:
+    - { name: http, port: 9200, targetPort: 9200 }
+    - { name: transport, port: 9300, targetPort: 9300 }
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -190,6 +234,10 @@ spec:
               done
               echo "Aguardando o Redis (6379)..."
               until nc -z -w 2 redis-service 6379; do
+                sleep 2
+              done
+              echo "Aguardando o Elasticsearch (9200)..."
+              until nc -z -w 2 elasticsearch-service 9200; do
                 sleep 2
               done
               echo "Todas as dependências estão prontas!"
@@ -229,6 +277,10 @@ spec:
               valueFrom: { secretKeyRef: { name: catalog-api-secrets, key: mongodb-uri } }
             - name: MongoDB__DatabaseName
               valueFrom: { secretKeyRef: { name: catalog-api-secrets, key: mongodb-dbname } }
+            - name: Elasticsearch__Url
+              valueFrom: { secretKeyRef: { name: catalog-api-secrets, key: elasticsearch-uri } }
+            - name: Elasticsearch__DefaultIndex
+              valueFrom: { configMapKeyRef: { name: catalog-api-config, key: elasticsearch-default-index } }
 ---
 apiVersion: v1
 kind: Service
@@ -236,6 +288,6 @@ metadata:
   name: catalog-api-service
   namespace: fgc
 spec:
-  type: NodePort
+  type: ClusterIP
   selector: { app: catalog-api }
-  ports: [{ port: 80, targetPort: 8080, nodePort: 30081 }]
+  ports: [{ port: 80, targetPort: 8080 }]

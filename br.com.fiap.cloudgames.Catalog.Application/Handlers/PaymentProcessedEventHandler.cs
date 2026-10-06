@@ -2,7 +2,7 @@ using br.com.fiap.cloudgames.Catalog.Application.Events;
 using br.com.fiap.cloudgames.Catalog.Application.UnitsOfWork;
 using br.com.fiap.cloudgames.Catalog.Domain.Aggregates;
 using br.com.fiap.cloudgames.Catalog.Domain.Entities;
-using br.com.fiap.cloudgames.Catalog.Domain.Repositories;
+using br.com.fiap.cloudgames.Catalog.Application.Repositories;
 using Microsoft.Extensions.Logging;
 
 namespace br.com.fiap.cloudgames.Catalog.Application.Handlers;
@@ -83,6 +83,8 @@ public class PaymentProcessedEventHandler
 
         if (isNewLibrary)
             await _libraryRepository.AddAsync(library);
+        else
+            await _libraryRepository.UpdateAsync(library);
     }
 
     public async Task RejectOrder(Order order)

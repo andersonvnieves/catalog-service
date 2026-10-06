@@ -23,6 +23,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\br.com.fiap.cloudgames.Catalog.Application\br.com.fiap.cloudgames.Catalog.Application.csproj" />
+    <ProjectReference Include="..\br.com.fiap.cloudgames.Catalog.Infrastructure\br.com.fiap.cloudgames.Catalog.Infrastructure.csproj" />
   </ItemGroup>
 
     <ItemGroup>

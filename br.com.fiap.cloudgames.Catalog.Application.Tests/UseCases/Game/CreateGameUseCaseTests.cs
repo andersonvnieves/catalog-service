@@ -1,12 +1,9 @@
 ﻿using br.com.fiap.cloudgames.Catalog.Application.Tests.TestData;
 using br.com.fiap.cloudgames.Catalog.Application.UnitsOfWork;
 using br.com.fiap.cloudgames.Catalog.Application.UseCases.Game.CreateGame;
-using br.com.fiap.cloudgames.Catalog.Domain.Repositories;
+using br.com.fiap.cloudgames.Catalog.Application.Repositories;
 using Microsoft.Extensions.Logging;
 using Moq;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace br.com.fiap.cloudgames.Catalog.Application.Tests.UseCases.Game
 {

@@ -1,6 +1,6 @@
 ﻿using br.com.fiap.cloudgames.Catalog.Application.Abstractions;
 using br.com.fiap.cloudgames.Catalog.Domain.Aggregates;
-using br.com.fiap.cloudgames.Catalog.Domain.Repositories;
+using br.com.fiap.cloudgames.Catalog.Application.Repositories;
 
 namespace br.com.fiap.cloudgames.Catalog.Infrastructure.Persistence.Relational.Repositories.Cached
 {
@@ -18,7 +18,9 @@ namespace br.com.fiap.cloudgames.Catalog.Infrastructure.Persistence.Relational.R
 
         public async Task AddAsync(Game game)
         {
+            await _cacheProvider.DeleteDataAsync(GameKey(game.Id));
             await _gameRepository.AddAsync(game);
+            await _cacheProvider.SetDataAsync(GameKey(game.Id), game);
         }
 
         public async Task<Game?> GetByIdAsync(Guid id)

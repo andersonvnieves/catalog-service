@@ -1,5 +1,5 @@
 ﻿using br.com.fiap.cloudgames.Catalog.Domain.Aggregates;
-using br.com.fiap.cloudgames.Catalog.Domain.Repositories;
+using br.com.fiap.cloudgames.Catalog.Application.Repositories;
 using MongoDB.Driver;
 
 namespace br.com.fiap.cloudgames.Catalog.Infrastructure.Persistence.MongoDB.Repositories

@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace br.com.fiap.cloudgames.Catalog.Domain.Repositories
+namespace br.com.fiap.cloudgames.Catalog.Application.Repositories
 {
     public interface IGameRepository
     {

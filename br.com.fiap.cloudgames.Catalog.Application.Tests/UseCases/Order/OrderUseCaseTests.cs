@@ -4,10 +4,9 @@ using br.com.fiap.cloudgames.Catalog.Application.UnitsOfWork;
 using br.com.fiap.cloudgames.Catalog.Application.UseCases.Order.CancelOrder;
 using br.com.fiap.cloudgames.Catalog.Application.UseCases.Order.CompleteOrder;
 using br.com.fiap.cloudgames.Catalog.Application.UseCases.Order.CreateOrder;
-using br.com.fiap.cloudgames.Catalog.Domain.Aggregates;
 using br.com.fiap.cloudgames.Catalog.Domain.Entities;
 using br.com.fiap.cloudgames.Catalog.Domain.Enums;
-using br.com.fiap.cloudgames.Catalog.Domain.Repositories;
+using br.com.fiap.cloudgames.Catalog.Application.Repositories;
 using br.com.fiap.cloudgames.Catalog.Domain.ValueObjects;
 using Moq;
 

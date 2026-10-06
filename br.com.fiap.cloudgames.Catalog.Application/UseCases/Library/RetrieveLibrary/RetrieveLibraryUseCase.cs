@@ -1,5 +1,5 @@
 ﻿using br.com.fiap.cloudgames.Catalog.Application.Abstractions;
-using br.com.fiap.cloudgames.Catalog.Domain.Repositories;
+using br.com.fiap.cloudgames.Catalog.Application.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Text;
