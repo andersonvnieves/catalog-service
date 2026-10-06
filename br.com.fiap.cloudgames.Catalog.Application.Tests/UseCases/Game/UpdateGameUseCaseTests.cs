@@ -1,4 +1,4 @@
-﻿using br.com.fiap.cloudgames.Catalog.Application.Tests.TestData;
+using br.com.fiap.cloudgames.Catalog.Application.Tests.TestData;
 using br.com.fiap.cloudgames.Catalog.Application.UnitsOfWork;
 using br.com.fiap.cloudgames.Catalog.Application.UseCases.Game.UpdateGame;
 using br.com.fiap.cloudgames.Catalog.Domain.Entities;
@@ -112,7 +112,7 @@ namespace br.com.fiap.cloudgames.Catalog.Application.Tests.UseCases.Game
             request.Id = existingGame.Id.ToString();
 
             repo.Setup(x => x.GetByIdAsync(existingGame.Id)).ReturnsAsync(existingGame);
-            repo.Setup(x => x.UpdateAsync(existingGame));
+            repo.Setup(x => x.UpdateAsync(existingGame)).Returns(Task.CompletedTask);
             uow.Setup(x => x.CommitAsync()).Returns(Task.CompletedTask);
 
             var sut = new UpdateGameUseCase(uow.Object, repo.Object, logger.Object);

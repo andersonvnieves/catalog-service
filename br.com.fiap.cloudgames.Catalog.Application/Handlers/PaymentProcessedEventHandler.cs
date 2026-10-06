@@ -83,6 +83,8 @@ public class PaymentProcessedEventHandler
 
         if (isNewLibrary)
             await _libraryRepository.AddAsync(library);
+        else
+            await _libraryRepository.UpdateAsync(library);
     }
 
     public async Task RejectOrder(Order order)
