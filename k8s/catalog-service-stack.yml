@@ -191,7 +191,7 @@ spec:
               echo "Todas as dependências estão prontas!"
       containers:
         - name: catalog-api
-          image: fgc-catalog-service:latest
+          image: 230287251097.dkr.ecr.sa-east-1.amazonaws.com/fgc-catalog-service:latest
           imagePullPolicy: IfNotPresent
           ports: [{ containerPort: 8080 }]
           env:
