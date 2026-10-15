@@ -1,36 +1,102 @@
-apiVersion: v1
-kind: Namespace
-metadata: { name: fgc }
+apiVersion: external-secrets.io/v1beta1
+kind: ExternalSecret
+metadata:
+  name: catalog-api-secrets
+  namespace: fgc
+spec:
+  refreshInterval: 1h
+  secretStoreRef:
+    name: aws-parameter-store
+    kind: SecretStore
+  target:
+    name: catalog-api-secrets
+    creationPolicy: Owner
+  data:
+    - secretKey: sql-password
+      remoteRef:
+        key: /fgc/catalog/sql-password
+    - secretKey: connection-string
+      remoteRef:
+        key: /fgc/catalog/connection-string
+    - secretKey: jwt-key
+      remoteRef:
+        key: /fgc/jwt/secret
+    - secretKey: rabbitmq-uri
+      remoteRef:
+        key: /fgc/catalog/rabbitmq-uri
+    - secretKey: mongo-user
+      remoteRef:
+        key: /fgc/catalog/mongo-user
+    - secretKey: mongo-password
+      remoteRef:
+        key: /fgc/catalog/mongo-password
+    - secretKey: mongodb-uri
+      remoteRef:
+        key: /fgc/catalog/mongodb-uri
+    - secretKey: mongodb-dbname
+      remoteRef:
+        key: /fgc/catalog/mongodb-dbname
+    - secretKey: redis-connection
+      remoteRef:
+        key: /fgc/catalog/redis-connection
+    - secretKey: redis-password
+      remoteRef:
+        key: /fgc/catalog/redis-password
 ---
-apiVersion: v1
-kind: Secret
-metadata: { name: catalog-api-secrets, namespace: fgc }
-type: Opaque
-stringData:
-  sql-password: "rohPav-juKmeb-DIhku9!"
-  connection-string: "Server=catalog-db-service;Database=FGC_Catalog;User Id=sa;Password=rohPav-juKmeb-DIhku9!;TrustServerCertificate=True"
-  jwt-key: "8594df0eb5ecb4c96f8824462cc7d2e1885c138908f2f7b4357af54b72ab2ed6"
-  rabbitmq-uri: "amqp://admin:admin123@rabbitmq-service:5672/"
-  mongo-user: "mongoadmin"
-  mongo-password: "zessuq-8gyzda-jazhyN"
-  mongodb-uri: "mongodb://mongoadmin:zessuq-8gyzda-jazhyN@mongodb-service:27017/catalog_service?authSource=admin&guidRepresentation=Standard"
-  mongodb-dbname: "catalog_service"
-  redis-connection: "redis-service:6379,password=datgef-6zadci-nyZbud"
-  redis-password: "datgef-6zadci-nyZbud"
----
-apiVersion: v1
-kind: ConfigMap
-metadata: { name: catalog-api-config, namespace: fgc }
-data:
-  jwt-issuer: fgcapi
-  jwt-audience: fgcapi
-  jwt-token-ttl: "10"
-  order-created-exchange: fgc
-  order-created-routing-key: order.created
-  order-created-queue-name: order.created
-  payment-processed-exchange: fgc
-  payment-processed-routing-key: payment.processed
-  payment-processed-queue-name: catalog.payment.processed
+apiVersion: external-secrets.io/v1beta1
+kind: ExternalSecret
+metadata:
+  name: catalog-api-config
+  namespace: fgc
+spec:
+  refreshInterval: 1h
+  secretStoreRef:
+    name: aws-parameter-store
+    kind: SecretStore
+  target:
+    name: catalog-api-config
+    creationPolicy: Owner
+    template:
+      type: Opaque
+      engineVersion: v2
+      data:
+        jwt-issuer: "{{ .jwt_issuer }}"
+        jwt-audience: "{{ .jwt_audience }}"
+        jwt-token-ttl: "{{ .jwt_token_ttl }}"
+        order-created-exchange: "{{ .order_created_exchange }}"
+        order-created-routing-key: "{{ .order_created_routing_key }}"
+        order-created-queue-name: "{{ .order_created_queue_name }}"
+        payment-processed-exchange: "{{ .payment_processed_exchange }}"
+        payment-processed-routing-key: "{{ .payment_processed_routing_key }}"
+        payment-processed-queue-name: "{{ .payment_processed_queue_name }}"
+  data:
+    - secretKey: jwt_issuer
+      remoteRef:
+        key: /fgc/jwt/issuer
+    - secretKey: jwt_audience
+      remoteRef:
+        key: /fgc/jwt/audience
+    - secretKey: jwt_token_ttl
+      remoteRef:
+        key: /fgc/jwt/token-ttl
+    - secretKey: order_created_exchange
+      remoteRef:
+        key: /fgc/catalog/order-created-exchange
+    - secretKey: order_created_routing_key
+      remoteRef:
+        key: /fgc/catalog/order-created-routing-key
+    - secretKey: order_created_queue_name
+      remoteRef:
+        key: /fgc/catalog/order-created-queue-name
+    - secretKey: payment_processed_exchange
+      remoteRef:
+        key: /fgc/catalog/payment-processed-exchange
+    - secretKey: payment_processed_routing_key
+      remoteRef:
+        key: /fgc/catalog/payment-processed-routing-key
+    - secretKey: payment_processed_queue_name
+      remoteRef:
+        key: /fgc/catalog/payment-processed-queue-name
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -50,7 +116,7 @@ spec:
     spec:
       containers:
         - name: sqlserver
-          image: mcr.microsoft.com/mssql/server:2025-latest
+          image: mcr.microsoft.com/mssql/server:2022-latest
           ports: [{ containerPort: 1433 }]
           env:
             - { name: ACCEPT_EULA, value: "Y" }
@@ -177,7 +243,7 @@ spec:
             - -c
             - |
               echo "Aguardando o SQL Server (1433)..."
-              until nc -z -w 2 users-db-service 1433; do
+              until nc -z -w 2 catalog-db-service 1433; do
                 sleep 2
               done
               echo "Aguardando o RabbitMQ (5672)..."
@@ -232,6 +298,6 @@ metadata:
   name: catalog-api-service
   namespace: fgc
 spec:
-  type: NodePort
+  type: ClusterIP
   selector: { app: catalog-api }
-  ports: [{ port: 80, targetPort: 8080, nodePort: 30081 }]
+  ports: [{ port: 80, targetPort: 8080 }]
