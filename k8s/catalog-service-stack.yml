@@ -103,6 +103,7 @@ kind: PersistentVolumeClaim
 metadata: { name: catalog-db-pvc, namespace: fgc }
 spec:
   accessModes: [ReadWriteOnce]
+  storageClassName: gp3
   resources: { requests: { storage: 1Gi } }
 ---
 apiVersion: apps/v1
@@ -137,6 +138,7 @@ kind: PersistentVolumeClaim
 metadata: { name: catalog-mongo-pvc, namespace: fgc}
 spec:
   accessModes: [ReadWriteOnce]
+  storageClassName: gp3
   resources: { requests: { storage: 1Gi}}
 ---
 apiVersion: apps/v1
