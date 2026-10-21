@@ -1,4 +1,4 @@
-apiVersion: external-secrets.io/v1beta1
+apiVersion: external-secrets.io/v1
 kind: ExternalSecret
 metadata:
   name: catalog-api-secrets
@@ -12,9 +12,6 @@ spec:
     name: catalog-api-secrets
     creationPolicy: Owner
   data:
-    - secretKey: sql-password
-      remoteRef:
-        key: /fgc/catalog/sql-password
     - secretKey: connection-string
       remoteRef:
         key: /fgc/catalog/connection-string
@@ -24,12 +21,6 @@ spec:
     - secretKey: rabbitmq-uri
       remoteRef:
         key: /fgc/catalog/rabbitmq-uri
-    - secretKey: mongo-user
-      remoteRef:
-        key: /fgc/catalog/mongo-user
-    - secretKey: mongo-password
-      remoteRef:
-        key: /fgc/catalog/mongo-password
     - secretKey: mongodb-uri
       remoteRef:
         key: /fgc/catalog/mongodb-uri
@@ -39,11 +30,11 @@ spec:
     - secretKey: redis-connection
       remoteRef:
         key: /fgc/catalog/redis-connection
-    - secretKey: redis-password
+    - secretKey: elasticsearch-url
       remoteRef:
-        key: /fgc/catalog/redis-password
+        key: /fgc/catalog/elasticsearch-url
 ---
-apiVersion: external-secrets.io/v1beta1
+apiVersion: external-secrets.io/v1
 kind: ExternalSecret
 metadata:
   name: catalog-api-config
@@ -69,6 +60,7 @@ spec:
         payment-processed-exchange: "{{ .payment_processed_exchange }}"
         payment-processed-routing-key: "{{ .payment_processed_routing_key }}"
         payment-processed-queue-name: "{{ .payment_processed_queue_name }}"
+        elasticsearch-defaultindex: "{{ .elasticsearch_defaultindex }}"
   data:
     - secretKey: jwt_issuer
       remoteRef:
@@ -97,6 +89,9 @@ spec:
     - secretKey: payment_processed_queue_name
       remoteRef:
         key: /fgc/catalog/payment-processed-queue-name
+    - secretKey: elasticsearch_defaultindex
+      remoteRef:
+        key: /fgc/catalog/elasticsearch-defaultindex
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -124,33 +119,37 @@ spec:
             - name: ConnectionStrings__Default
               valueFrom: { secretKeyRef: { name: catalog-api-secrets, key: connection-string } }
             - name: Jwt__Issuer
-              valueFrom: { configMapKeyRef: { name: catalog-api-config, key: jwt-issuer } }
+              valueFrom: { secretKeyRef: { name: catalog-api-config, key: jwt-issuer } }
             - name: Jwt__Audience
-              valueFrom: { configMapKeyRef: { name: catalog-api-config, key: jwt-audience } }
+              valueFrom: { secretKeyRef: { name: catalog-api-config, key: jwt-audience } }
             - name: Jwt__Key
               valueFrom: { secretKeyRef: { name: catalog-api-secrets, key: jwt-key } }
             - name: Jwt__TokenTtlInMinutes
-              valueFrom: { configMapKeyRef: { name: catalog-api-config, key: jwt-token-ttl } }
+              valueFrom: { secretKeyRef: { name: catalog-api-config, key: jwt-token-ttl } }
             - name: RabbitMQ__URI
               valueFrom: { secretKeyRef: { name: catalog-api-secrets, key: rabbitmq-uri } }
             - name: RabbitMQ__OrderCreatedEvent__Exchange
-              valueFrom: { configMapKeyRef: { name: catalog-api-config, key: order-created-exchange } }
+              valueFrom: { secretKeyRef: { name: catalog-api-config, key: order-created-exchange } }
             - name: RabbitMQ__OrderCreatedEvent__RoutingKey
-              valueFrom: { configMapKeyRef: { name: catalog-api-config, key: order-created-routing-key } }
+              valueFrom: { secretKeyRef: { name: catalog-api-config, key: order-created-routing-key } }
             - name: RabbitMQ__OrderCreatedEvent__QueueName
-              valueFrom: { configMapKeyRef: { name: catalog-api-config, key: order-created-queue-name } }
+              valueFrom: { secretKeyRef: { name: catalog-api-config, key: order-created-queue-name } }
             - name: RabbitMQ__PaymentProcessedEvent__Exchange
-              valueFrom: { configMapKeyRef: { name: catalog-api-config, key: payment-processed-exchange } }
+              valueFrom: { secretKeyRef: { name: catalog-api-config, key: payment-processed-exchange } }
             - name: RabbitMQ__PaymentProcessedEvent__RoutingKey
-              valueFrom: { configMapKeyRef: { name: catalog-api-config, key: payment-processed-routing-key } }
+              valueFrom: { secretKeyRef: { name: catalog-api-config, key: payment-processed-routing-key } }
             - name: RabbitMQ__PaymentProcessedEvent__QueueName
-              valueFrom: { configMapKeyRef: { name: catalog-api-config, key: payment-processed-queue-name } }
+              valueFrom: { secretKeyRef: { name: catalog-api-config, key: payment-processed-queue-name } }
             - name: Redis__ConnectionString
               valueFrom: { secretKeyRef: { name: catalog-api-secrets, key: redis-connection } }
             - name: MongoDB__ConnectionString
               valueFrom: { secretKeyRef: { name: catalog-api-secrets, key: mongodb-uri } }
             - name: MongoDB__DatabaseName
               valueFrom: { secretKeyRef: { name: catalog-api-secrets, key: mongodb-dbname } }
+            - name: Elasticsearch__Url
+              valueFrom: { secretKeyRef: { name: catalog-api-secrets, key: elasticsearch-url } }
+            - name: Elasticsearch__DefaultIndex
+              valueFrom: { secretKeyRef: { name: catalog-api-config, key: elasticsearch-defaultindex } } # <-- CORRIGIDO AQUI
 ---
 apiVersion: v1
 kind: Service
