@@ -18,6 +18,7 @@ Serviço de catálogo. Gerencia jogos, a biblioteca do usuário e a criação de
 - RabbitMQ na porta `5672` (painel: `15672`).
 - Redis na porta `6379`.
 - MongoDB na porta `27017`.
+- Elasticsearch na porta `9200`.
 
 Para iniciar toda a plataforma — incluindo essas dependências — use o [README da orquestração](https://github.com/andersonvnieves/orchestration/blob/main/README.md). Para executar apenas este serviço, deixe SQL Server e RabbitMQ disponíveis localmente.
 
@@ -40,6 +41,9 @@ $env:RabbitMQ__PaymentProcessedEvent__QueueName = "catalog.payment.processed"
 $env:Redis__ConnectionString = "<REDIS_IP>:6379,password=<SENHA>"
 $env:MongoDB__ConnectionString = "mongodb://<USUARIO>:<SENHA>@<MONGO_IP>:27017/?authSource=admin"
 $env:MongoDB__DatabaseName = "catalog_service"
+$env:Elasticsearch__Url = "<ELASTICSEARCH_IP>:9200"
+$env:Elasticsearch__DefaultIndex = "games"
+
 ```
 
 ## Executar localmente
