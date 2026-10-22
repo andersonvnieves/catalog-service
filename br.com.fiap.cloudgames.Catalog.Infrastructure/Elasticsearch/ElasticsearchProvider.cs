@@ -1,27 +1,28 @@
 using br.com.fiap.cloudgames.Catalog.Infrastructure.Config;
-using Elastic.Clients.Elasticsearch;
-using Elastic.Transport;
 using Microsoft.Extensions.Options;
+using OpenSearch.Client;
+using OpenSearch.Net;
 
 namespace br.com.fiap.cloudgames.Catalog.Infrastructure.Elasticsearch;
 
 public class ElasticsearchProvider
 {
-    public ElasticsearchClient Client { get; }
+    public OpenSearchClient Client { get; }
     public string DefaultIndex { get; }
 
     public ElasticsearchProvider(IOptions<ElasticsearchSettings> settings)
     {
         DefaultIndex = settings.Value.DefaultIndex;
-        var clientSettings = new ElasticsearchClientSettings(new Uri(settings.Value.Url))
+        
+        var connectionSettings = new ConnectionSettings(new Uri(settings.Value.Url))
             .DefaultIndex(DefaultIndex);
        
         if (!string.IsNullOrEmpty(settings.Value.Username) && 
             !string.IsNullOrEmpty(settings.Value.Password))
         {
-            clientSettings.Authentication(new BasicAuthentication(settings.Value.Username, settings.Value.Password));
+            connectionSettings.BasicAuthentication(settings.Value.Username, settings.Value.Password);
         }
         
-        Client = new ElasticsearchClient(clientSettings);
+        Client = new OpenSearchClient(connectionSettings);
     }
 }

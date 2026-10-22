@@ -33,6 +33,12 @@ spec:
     - secretKey: elasticsearch-url
       remoteRef:
         key: /fgc/catalog/elasticsearch-url
+    - secretKey: elasticsearch-username
+      remoteRef:
+        key: /fgc/catalog/elasticsearch-username
+    - secretKey: elasticsearch-password
+      remoteRef:
+        key: /fgc/catalog/elasticsearch-password
 ---
 apiVersion: external-secrets.io/v1
 kind: ExternalSecret
@@ -149,7 +155,11 @@ spec:
             - name: Elasticsearch__Url
               valueFrom: { secretKeyRef: { name: catalog-api-secrets, key: elasticsearch-url } }
             - name: Elasticsearch__DefaultIndex
-              valueFrom: { secretKeyRef: { name: catalog-api-config, key: elasticsearch-defaultindex } } # <-- CORRIGIDO AQUI
+              valueFrom: { secretKeyRef: { name: catalog-api-config, key: elasticsearch-defaultindex } }
+            - name: Elasticsearch__Username
+              valueFrom: { secretKeyRef: { name: catalog-api-secrets, key: elasticsearch-username } }
+            - name: Elasticsearch__Password
+              valueFrom: { secretKeyRef: { name: catalog-api-secrets, key: elasticsearch-password } }
 ---
 apiVersion: v1
 kind: Service
