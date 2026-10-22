@@ -26,9 +26,17 @@ namespace br.com.fiap.cloudgames.Catalog.Infrastructure.Persistence.Relational.R
             return await _games.FirstOrDefaultAsync(g => g.Id == id);
         }
 
-        public async Task UpdateAsync(Game game)
+        public async Task<Game?> GetByIdForUpdateAsync(Guid id)
         {
-            _games.Update(game);
+            return await _games.AsTracking().FirstOrDefaultAsync(g => g.Id == id);
+        }
+
+        public Task UpdateAsync(Game game)
+        {
+            if (_context.Entry(game).State == EntityState.Detached)
+                _games.Update(game);
+
+            return Task.CompletedTask;
         }
 
         public async Task<IEnumerable<Game>> GetByIdsAsync(IEnumerable<Guid> ids)

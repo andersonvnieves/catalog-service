@@ -8,11 +8,13 @@ namespace br.com.fiap.cloudgames.Catalog.Infrastructure.Elasticsearch;
 public class ElasticsearchProvider
 {
     public ElasticsearchClient Client { get; }
+    public string DefaultIndex { get; }
 
     public ElasticsearchProvider(IOptions<ElasticsearchSettings> settings)
     {
+        DefaultIndex = settings.Value.DefaultIndex;
         var clientSettings = new ElasticsearchClientSettings(new Uri(settings.Value.Url))
-            .DefaultIndex(settings.Value.DefaultIndex);
+            .DefaultIndex(DefaultIndex);
        
         if (!string.IsNullOrEmpty(settings.Value.Username) && 
             !string.IsNullOrEmpty(settings.Value.Password))

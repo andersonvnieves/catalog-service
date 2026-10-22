@@ -21,10 +21,13 @@ public class ElasticsearchGameRepository : IGameRepository
         await _gameRepository.AddAsync(game);
 
         var document = game.ToElasticDocument();
-        await _elasticsearchProvider.Client.IndexAsync(document, idx => idx
-            .Index("games")
+        var response = await _elasticsearchProvider.Client.IndexAsync(document, idx => idx
+            .Index(_elasticsearchProvider.DefaultIndex)
             .Id(document.Id)
-        );    
+        );
+
+        if (!response.IsValidResponse)
+            throw new InvalidOperationException($"Failed to index game '{game.Id}' in Elasticsearch: {response.DebugInformation}");
     }
 
     public async Task<Game?> GetByIdAsync(Guid id)
@@ -32,15 +35,23 @@ public class ElasticsearchGameRepository : IGameRepository
         return await _gameRepository.GetByIdAsync(id);
     }
 
+    public Task<Game?> GetByIdForUpdateAsync(Guid id)
+    {
+        return _gameRepository.GetByIdForUpdateAsync(id);
+    }
+
     public async Task UpdateAsync(Game game)
     {
         await _gameRepository.UpdateAsync(game);
 
         var document = game.ToElasticDocument();
-        await _elasticsearchProvider.Client.IndexAsync(document, idx => idx
-            .Index("games")
+        var response = await _elasticsearchProvider.Client.IndexAsync(document, idx => idx
+            .Index(_elasticsearchProvider.DefaultIndex)
             .Id(document.Id)
         );
+
+        if (!response.IsValidResponse)
+            throw new InvalidOperationException($"Failed to index game '{game.Id}' in Elasticsearch: {response.DebugInformation}");
     }
 
     public async Task<IEnumerable<Game>> GetByIdsAsync(IEnumerable<Guid> ids)

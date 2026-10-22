@@ -38,6 +38,11 @@ namespace br.com.fiap.cloudgames.Catalog.Infrastructure.Persistence.Relational.R
             return dbGame;
         }
 
+        public Task<Game?> GetByIdForUpdateAsync(Guid id)
+        {
+            return _gameRepository.GetByIdForUpdateAsync(id);
+        }
+
         public async Task<IEnumerable<Game>> GetByIdsAsync(IEnumerable<Guid> ids)
         {
             if (!ids.Any()) 

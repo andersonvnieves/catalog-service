@@ -67,7 +67,7 @@ namespace br.com.fiap.cloudgames.Catalog.Application.UseCases.Game.UpdateGame
 
                 var price = new Price(request.Price);
 
-                var game = await _gameRepository.GetByIdAsync(gameId);
+                var game = await _gameRepository.GetByIdForUpdateAsync(gameId);
                 if (game == null)
                 {
                     _logger.LogWarning("Game not found. GameId={GameId}", request.Id);

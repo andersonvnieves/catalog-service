@@ -83,7 +83,7 @@ namespace br.com.fiap.cloudgames.Catalog.Application.Tests.UseCases.Game
             var request = ApplicationTestData.ValidUpdateGameRequest();
             var gameId = Guid.Parse(request.Id);
 
-            repo.Setup(x => x.GetByIdAsync(gameId)).ReturnsAsync((br.com.fiap.cloudgames.Catalog.Domain.Aggregates.Game?)null);
+            repo.Setup(x => x.GetByIdForUpdateAsync(gameId)).ReturnsAsync((br.com.fiap.cloudgames.Catalog.Domain.Aggregates.Game?)null);
 
             var ex = await Assert.ThrowsAsync<ApplicationException>(() => sut.ExecuteAsync(request));
             Assert.Contains("not found", ex.Message);
@@ -111,7 +111,7 @@ namespace br.com.fiap.cloudgames.Catalog.Application.Tests.UseCases.Game
             var request = ApplicationTestData.ValidUpdateGameRequest();
             request.Id = existingGame.Id.ToString();
 
-            repo.Setup(x => x.GetByIdAsync(existingGame.Id)).ReturnsAsync(existingGame);
+            repo.Setup(x => x.GetByIdForUpdateAsync(existingGame.Id)).ReturnsAsync(existingGame);
             repo.Setup(x => x.UpdateAsync(existingGame)).Returns(Task.CompletedTask);
             uow.Setup(x => x.CommitAsync()).Returns(Task.CompletedTask);
 
@@ -130,7 +130,7 @@ namespace br.com.fiap.cloudgames.Catalog.Application.Tests.UseCases.Game
             Assert.Contains("SinglePlayer", response.GameModes);
             Assert.Contains("Publisher Inc", response.Publisher);
 
-            repo.Verify(x => x.GetByIdAsync(existingGame.Id), Times.Once);
+            repo.Verify(x => x.GetByIdForUpdateAsync(existingGame.Id), Times.Once);
             repo.Verify(x => x.UpdateAsync(existingGame), Times.Once);
             uow.Verify(x => x.CommitAsync(), Times.Once);
         }
