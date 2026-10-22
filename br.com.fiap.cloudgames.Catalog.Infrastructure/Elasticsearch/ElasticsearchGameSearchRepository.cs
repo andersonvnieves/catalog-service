@@ -16,6 +16,7 @@ public class ElasticsearchGameSearchRepository : IGameSearchRepository
     public async Task<IEnumerable<GameIndexDocument>> SearchAsync(string query)
     {
         var searchResponse = await _elasticsearchProvider.Client.SearchAsync<GameIndexDocument>(s => s
+            .Index(_elasticsearchProvider.DefaultIndex)
             .Query(q => q
                 .Bool(b => b
                     .Must(m => m
