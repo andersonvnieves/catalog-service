@@ -1,6 +1,6 @@
 using br.com.fiap.cloudgames.Catalog.Application.DTOs;
 using br.com.fiap.cloudgames.Catalog.Application.Repositories;
-using Elastic.Clients.Elasticsearch;
+using OpenSearch.Client;
 
 namespace br.com.fiap.cloudgames.Catalog.Infrastructure.Elasticsearch;
 
@@ -23,14 +23,14 @@ public class ElasticsearchGameSearchRepository : IGameSearchRepository
                         .MultiMatch(mm => mm
                             .Query(query)
                             .Fields(new[] { "title^3", "description", "story" })
-                            .Fuzziness(new Fuzziness("AUTO"))
+                            .Fuzziness(Fuzziness.Auto)
                         )
                     )
                 )
             )
         );
 
-        if (!searchResponse.IsValidResponse)
+        if (!searchResponse.IsValid)
         {
             return Enumerable.Empty<GameIndexDocument>();
         }
