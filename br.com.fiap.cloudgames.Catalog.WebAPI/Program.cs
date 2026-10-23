@@ -115,12 +115,14 @@ builder.Services.AddSingleton<IMongoClient>(sp =>
 {
     var connectionString = builder.Configuration["MongoDB:ConnectionString"];
     var settings = MongoClientSettings.FromConnectionString(connectionString);
-
-    settings.SslSettings = new SslSettings 
-    { 
-        ServerCertificateValidationCallback = (sender, certificate, chain, sslPolicyErrors) => true 
+    settings.RetryWrites = false;
+    settings.SslSettings = new SslSettings
+    {
+        ServerCertificateValidationCallback = (sender, certificate, chain, sslPolicyErrors) => true
     };
+
     return new MongoClient(settings);
+
 });
 
 builder.Services.AddScoped<IMongoDatabase>(sp => 
