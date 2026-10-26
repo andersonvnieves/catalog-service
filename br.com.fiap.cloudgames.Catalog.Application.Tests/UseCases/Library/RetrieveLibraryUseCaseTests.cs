@@ -30,17 +30,21 @@ public class RetrieveLibraryUseCaseTests
     }
 
     [Fact]
-    public async Task ExecuteAsync_WhenLibraryDoesNotExist_ShouldThrow()
+    public async Task ExecuteAsync_WhenLibraryDoesNotExist_ShouldCreateLibrary()
     {
+        var userId = Guid.NewGuid();
         var libraries = new Mock<ILibraryRepository>(MockBehavior.Strict);
         var games = new Mock<IGameRepository>(MockBehavior.Strict);
         var currentUser = new Mock<ICurrentUser>(MockBehavior.Strict);
-        var userId = Guid.NewGuid();
         currentUser.SetupGet(x => x.UserId).Returns(userId);
+        // Repository returns null initially, then expects AddAsync
         libraries.Setup(x => x.GetByUserIdAsync(userId)).ReturnsAsync((br.com.fiap.cloudgames.Catalog.Domain.Aggregates.Library?)null);
-
-        var exception = await Assert.ThrowsAsync<ApplicationException>(() => new RetrieveLibraryUseCase(libraries.Object, games.Object, currentUser.Object).ExecuteAsync());
-
-        Assert.Equal("No Library found", exception.Message);
+        libraries.Setup(x => x.AddAsync(It.IsAny<br.com.fiap.cloudgames.Catalog.Domain.Aggregates.Library>()))
+                 .Returns(Task.CompletedTask);
+        games.Setup(x => x.GetByIdsAsync(It.IsAny<System.Collections.Generic.IEnumerable<System.Guid>>()))
+                 .ReturnsAsync(System.Array.Empty<br.com.fiap.cloudgames.Catalog.Domain.Aggregates.Game>());
+            var response = await new RetrieveLibraryUseCase(libraries.Object, games.Object, currentUser.Object).ExecuteAsync();
+        Assert.Empty(response.OwnedGames);
+        libraries.Verify(x => x.AddAsync(It.IsAny<br.com.fiap.cloudgames.Catalog.Domain.Aggregates.Library>()), Times.Once);
     }
 }
