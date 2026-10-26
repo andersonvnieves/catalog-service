@@ -1,8 +1,10 @@
-﻿using br.com.fiap.cloudgames.Catalog.Application.Abstractions;
+using br.com.fiap.cloudgames.Catalog.Application.Abstractions;
 using br.com.fiap.cloudgames.Catalog.Application.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using br.com.fiap.cloudgames.Catalog.Domain.Aggregates;
+using LibraryAggregate = br.com.fiap.cloudgames.Catalog.Domain.Aggregates.Library;
 
 namespace br.com.fiap.cloudgames.Catalog.Application.UseCases.Library.RetrieveLibrary
 {
@@ -22,8 +24,11 @@ namespace br.com.fiap.cloudgames.Catalog.Application.UseCases.Library.RetrieveLi
         public async Task<RetrieveLibraryResponse> ExecuteAsync()
         {
             var library = await _libraryRepository.GetByUserIdAsync(_currentUser.UserId);
-            if(library == null)
-                throw new ApplicationException("No Library found");
+            if (library == null)
+            {
+                library = LibraryAggregate.Create(_currentUser.UserId);
+                await _libraryRepository.AddAsync(library);
+            }
             
             var games = await _gameRepository.GetByIdsAsync(library.OwnedGames.Select(x => x.GameId));
             
