@@ -69,13 +69,19 @@ public abstract class RabbitMqMessageConsumer<T> : IMessageConsumer, IAsyncDispo
 
                 await _channel.BasicAckAsync(ea.DeliveryTag, false);
             }
+            catch (ApplicationException ex)
+            {
+                // Business rule violation (e.g. "Order already processed").
+                // Retrying will never succeed — ACK to discard from queue.
+                _logger.LogWarning(ex, "Erro de negócio ao processar mensagem. Mensagem descartada.");
+                await _channel.BasicAckAsync(ea.DeliveryTag, false);
+            }
             catch (Exception ex)
             {
+                // Unexpected/infrastructure error — NACK without requeue so the
+                // message goes to the dead-letter queue instead of looping forever.
                 _logger.LogError(ex, "Erro ao processar mensagem.");
-                await _channel.BasicNackAsync(
-                    ea.DeliveryTag,
-                    false,
-                    true);
+                await _channel.BasicNackAsync(ea.DeliveryTag, false, requeue: false);
             }
         };
 
