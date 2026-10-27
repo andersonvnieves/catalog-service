@@ -110,19 +110,13 @@ builder.Services.AddScoped<ICurrentUser, JwtCurrentUser>();
 builder.Services.AddScoped<ICacheProvider, RedisCacheProvider>();
 
 
-// MongoDB / DocumentDB
+//MongoDB
 builder.Services.AddSingleton<IMongoClient>(sp =>
-{
-    var connectionString = builder.Configuration["MongoDB:ConnectionString"];
-    var settings = MongoClientSettings.FromConnectionString(connectionString);
-    settings.RetryWrites = false;
-    settings.SslSettings = new SslSettings
-    {
-        ServerCertificateValidationCallback = (sender, certificate, chain, sslPolicyErrors) => true
-    };
+    new MongoClient(builder.Configuration["MongoDB:ConnectionString"]));
 
-    return new MongoClient(settings);
-
+builder.Services.AddScoped<IMongoDatabase>(sp => {
+    var client = sp.GetRequiredService<IMongoClient>();
+    return client.GetDatabase(builder.Configuration["MongoDB:DatabaseName"]);
 });
 
 builder.Services.AddScoped<IMongoDatabase>(sp => 
