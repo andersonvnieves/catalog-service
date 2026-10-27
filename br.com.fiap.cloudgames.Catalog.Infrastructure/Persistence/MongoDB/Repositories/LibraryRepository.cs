@@ -15,8 +15,7 @@ namespace br.com.fiap.cloudgames.Catalog.Infrastructure.Persistence.MongoDB.Repo
                 
         public async Task AddAsync(Library library)
         {
-            var filter = Builders<Library>.Filter.Eq(l => l.UserId, library.UserId);
-            await _librariesCollection.ReplaceOneAsync(filter, library, new ReplaceOptions { IsUpsert = true });
+            await _librariesCollection.InsertOneAsync(library);
         }
 
         public async Task UpdateAsync(Library library)
